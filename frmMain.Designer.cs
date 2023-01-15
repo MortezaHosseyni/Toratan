@@ -62,6 +62,8 @@
             this.col_SourcePort = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_DestPort = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_Protocol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.col_PacketType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.col_LiveTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mnu_TopMenu.SuspendLayout();
             this.sts_BottomStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_PacketsList)).BeginInit();
@@ -125,14 +127,14 @@
             // 
             this.btn_OnePageReport.Enabled = false;
             this.btn_OnePageReport.Name = "btn_OnePageReport";
-            this.btn_OnePageReport.Size = new System.Drawing.Size(180, 22);
+            this.btn_OnePageReport.Size = new System.Drawing.Size(163, 22);
             this.btn_OnePageReport.Text = "One Page Report";
             // 
             // btn_ExportExcel
             // 
             this.btn_ExportExcel.Enabled = false;
             this.btn_ExportExcel.Name = "btn_ExportExcel";
-            this.btn_ExportExcel.Size = new System.Drawing.Size(180, 22);
+            this.btn_ExportExcel.Size = new System.Drawing.Size(163, 22);
             this.btn_ExportExcel.Text = "Export To Excel";
             // 
             // sts_BottomStatus
@@ -252,6 +254,7 @@
             this.btn_SelectPcap.TabIndex = 6;
             this.btn_SelectPcap.Text = "...";
             this.btn_SelectPcap.UseVisualStyleBackColor = true;
+            this.btn_SelectPcap.Click += new System.EventHandler(this.btn_SelectPcap_Click);
             // 
             // btn_CapturePackets
             // 
@@ -261,6 +264,11 @@
             this.btn_CapturePackets.TabIndex = 7;
             this.btn_CapturePackets.Text = "Capture Packets";
             this.btn_CapturePackets.UseVisualStyleBackColor = true;
+            this.btn_CapturePackets.Click += new System.EventHandler(this.btn_CapturePackets_Click);
+            // 
+            // bgw_ReadPackets
+            // 
+            this.bgw_ReadPackets.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgw_ReadPackets_DoWork);
             // 
             // dgv_PacketsList
             // 
@@ -274,7 +282,9 @@
             this.col_DestIP,
             this.col_SourcePort,
             this.col_DestPort,
-            this.col_Protocol});
+            this.col_Protocol,
+            this.col_PacketType,
+            this.col_LiveTime});
             this.dgv_PacketsList.Location = new System.Drawing.Point(12, 27);
             this.dgv_PacketsList.Name = "dgv_PacketsList";
             this.dgv_PacketsList.ReadOnly = true;
@@ -321,6 +331,19 @@
             this.col_Protocol.HeaderText = "Protocol";
             this.col_Protocol.Name = "col_Protocol";
             this.col_Protocol.ReadOnly = true;
+            // 
+            // col_PacketType
+            // 
+            this.col_PacketType.HeaderText = "Packet Type";
+            this.col_PacketType.Name = "col_PacketType";
+            this.col_PacketType.ReadOnly = true;
+            this.col_PacketType.Width = 150;
+            // 
+            // col_LiveTime
+            // 
+            this.col_LiveTime.HeaderText = "Live Time";
+            this.col_LiveTime.Name = "col_LiveTime";
+            this.col_LiveTime.ReadOnly = true;
             // 
             // frmMain
             // 
@@ -388,6 +411,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn col_SourcePort;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_DestPort;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_Protocol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn col_PacketType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn col_LiveTime;
     }
 }
 
