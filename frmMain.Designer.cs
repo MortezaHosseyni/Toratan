@@ -264,6 +264,8 @@
             // 
             // dgv_PacketsList
             // 
+            this.dgv_PacketsList.AllowUserToAddRows = false;
+            this.dgv_PacketsList.AllowUserToDeleteRows = false;
             this.dgv_PacketsList.BackgroundColor = System.Drawing.SystemColors.ControlLight;
             this.dgv_PacketsList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_PacketsList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -275,6 +277,7 @@
             this.col_Protocol});
             this.dgv_PacketsList.Location = new System.Drawing.Point(12, 27);
             this.dgv_PacketsList.Name = "dgv_PacketsList";
+            this.dgv_PacketsList.ReadOnly = true;
             this.dgv_PacketsList.Size = new System.Drawing.Size(586, 447);
             this.dgv_PacketsList.TabIndex = 8;
             // 
@@ -282,36 +285,42 @@
             // 
             this.col_No.HeaderText = "#";
             this.col_No.Name = "col_No";
-            this.col_No.Width = 90;
+            this.col_No.ReadOnly = true;
+            this.col_No.Width = 80;
             // 
             // col_SrcIP
             // 
             this.col_SrcIP.HeaderText = "Source IP";
             this.col_SrcIP.Name = "col_SrcIP";
+            this.col_SrcIP.ReadOnly = true;
             this.col_SrcIP.Width = 200;
             // 
             // col_DestIP
             // 
             this.col_DestIP.HeaderText = "Destination IP";
             this.col_DestIP.Name = "col_DestIP";
+            this.col_DestIP.ReadOnly = true;
             this.col_DestIP.Width = 200;
             // 
             // col_SourcePort
             // 
             this.col_SourcePort.HeaderText = "Source Port";
             this.col_SourcePort.Name = "col_SourcePort";
+            this.col_SourcePort.ReadOnly = true;
             this.col_SourcePort.Width = 150;
             // 
             // col_DestPort
             // 
             this.col_DestPort.HeaderText = "Destination Port";
             this.col_DestPort.Name = "col_DestPort";
+            this.col_DestPort.ReadOnly = true;
             this.col_DestPort.Width = 150;
             // 
             // col_Protocol
             // 
             this.col_Protocol.HeaderText = "Protocol";
             this.col_Protocol.Name = "col_Protocol";
+            this.col_Protocol.ReadOnly = true;
             // 
             // frmMain
             // 

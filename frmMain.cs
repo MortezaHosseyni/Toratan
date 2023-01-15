@@ -19,19 +19,26 @@ namespace Toratan
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            CheckEmptyDataGridView(dgv_PacketsList);
+            emptyTable();
         }
 
-        public static void CheckEmptyDataGridView(DataGridView dataGridView)
+        private void emptyTable()
         {
-            if (dataGridView.Rows.Count == 0)
+            Label lblEmpty = new Label();
+            lblEmpty.Text = "Select/Capture pcap file.";
+            lblEmpty.Font = new Font(lblEmpty.Font, FontStyle.Bold);
+            lblEmpty.TextAlign = ContentAlignment.MiddleCenter;
+            lblEmpty.Dock = DockStyle.Fill;
+
+            if (dgv_PacketsList.RowCount == 0)
             {
-                dataGridView.Visible = false;
-                var label = new Label();
-                label.Text = "Select .pcap file / Capture packets";
-                label.Dock = DockStyle.Fill;
-                label.TextAlign = ContentAlignment.MiddleCenter;
-                dataGridView.Controls.Add(label);
+                dgv_PacketsList.Controls.Add(lblEmpty);
+                lblEmpty.Visible = true;
+            }
+            else
+            {
+                dgv_PacketsList.Controls.Remove(lblEmpty);
+                lblEmpty.Visible = false;
             }
         }
     }
