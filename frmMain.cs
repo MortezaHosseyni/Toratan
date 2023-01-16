@@ -21,7 +21,6 @@ namespace Toratan
     {
         Label lblEmpty = new Label();
 
-
         #region Public Data For Report
 
         public string pcapName = "";
@@ -59,15 +58,35 @@ namespace Toratan
                 ctx_PCapFile.ForeColor = Color.Green;
             }
         }
+        sbyte cpackMode = 0; // 0: Off | 1: On
         private void btn_CapturePackets_Click(object sender, EventArgs e)
         {
-            bgw_ReadPackets = new BackgroundWorker();
-            bgw_ReadPackets.WorkerReportsProgress = true;
-            bgw_ReadPackets.DoWork += new DoWorkEventHandler(bgw_ReadPackets_DoWork);
-            bgw_ReadPackets.RunWorkerAsync();
+            if (cpackMode == 0)
+            {
+                cpackMode = 1;
+                btn_CapturePackets.Text = "Cancel";
+                dgv_PacketsList.Rows.Clear();
+
+                bgw_ReadPackets = new BackgroundWorker();
+                bgw_ReadPackets.WorkerSupportsCancellation = true;
+                bgw_ReadPackets.DoWork += new DoWorkEventHandler(bgw_ReadPackets_DoWork);
+                bgw_ReadPackets.RunWorkerAsync();
+            }
+            else
+            {
+                cpackMode = 0;
+                btn_CapturePackets.Text = "Capture Packets";
+                bgw_ReadPackets.CancelAsync();
+            }
+
         }
         private void capturePackets(string pcapFile)
         {
+            if (cpackMode == 0)
+            {
+                return;
+            }
+
             ICaptureDevice device;
             try
             {
@@ -79,13 +98,19 @@ namespace Toratan
                 Console.WriteLine("Caught exception when opening file" + e.ToString());
                 return;
             }
-
             device.OnPacketArrival += new PacketArrivalEventHandler(device_OnPacketArrival);
             device.Capture();
             device.Close();
 
             void device_OnPacketArrival(object sender, PacketCapture e)
             {
+                if (cpackMode == 0)
+                {
+                    device.StopCapture();
+                    ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.RowCount} Packet)";
+                    ctx_PacketsStatus.Text = "Stoped";
+                    return;
+                }
                 var rawPacket = e.GetPacket();
                 var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
@@ -122,67 +147,62 @@ namespace Toratan
                 if (tcpPacket != null)
                 {
                     var tcp = (IPPacket)tcpPacket.ParentPacket;
-                    packetDict["SrcIP"]      = tcp.SourceAddress.ToString();
-                    packetDict["DestIP"]     = tcp.SourceAddress.ToString();
-                    packetDict["SrcPort"]    = tcpPacket.SourcePort.ToString();
-                    packetDict["DestPort"]   = tcpPacket.DestinationPort.ToString();
-                    packetDict["Protocol"]   = tcp.Protocol.ToString();
+                    packetDict["SrcIP"] = tcp.SourceAddress.ToString();
+                    packetDict["DestIP"] = tcp.SourceAddress.ToString();
+                    packetDict["SrcPort"] = tcpPacket.SourcePort.ToString();
+                    packetDict["DestPort"] = tcpPacket.DestinationPort.ToString();
+                    packetDict["Protocol"] = tcp.Protocol.ToString();
                     packetDict["PacketType"] = tcp.Version.ToString();
-                    packetDict["TTL"]        = tcp.TimeToLive.ToString();
+                    packetDict["TTL"] = tcp.TimeToLive.ToString();
                 }
                 if (udpPacket != null)
                 {
                     var udp = (IPPacket)udpPacket.ParentPacket;
-                    packetDict["SrcIP"]      = udp.SourceAddress.ToString();
-                    packetDict["DestIP"]     = udp.SourceAddress.ToString();
-                    packetDict["SrcPort"]    = udpPacket.SourcePort.ToString();
-                    packetDict["DestPort"]   = udpPacket.DestinationPort.ToString();
-                    packetDict["Protocol"]   = udp.Protocol.ToString();
+                    packetDict["SrcIP"] = udp.SourceAddress.ToString();
+                    packetDict["DestIP"] = udp.SourceAddress.ToString();
+                    packetDict["SrcPort"] = udpPacket.SourcePort.ToString();
+                    packetDict["DestPort"] = udpPacket.DestinationPort.ToString();
+                    packetDict["Protocol"] = udp.Protocol.ToString();
                     packetDict["PacketType"] = udp.Version.ToString();
-                    packetDict["TTL"]        = udp.TimeToLive.ToString();
+                    packetDict["TTL"] = udp.TimeToLive.ToString();
                 }
 
                 if (arpPacket != null)
                 {
                     var arp = (IPPacket)arpPacket.ParentPacket;
-                    packetDict["SrcIP"]      = arpPacket.SenderProtocolAddress.ToString();
-                    packetDict["DestIP"]     = arpPacket.TargetProtocolAddress.ToString();
-                    packetDict["SrcPort"]    = arpPacket.SenderHardwareAddress.ToString();
-                    packetDict["DestPort"]   = arpPacket.TargetHardwareAddress.ToString();
-                    packetDict["Protocol"]   = "ARP";
+                    packetDict["SrcIP"] = arpPacket.SenderProtocolAddress.ToString();
+                    packetDict["DestIP"] = arpPacket.TargetProtocolAddress.ToString();
+                    packetDict["SrcPort"] = arpPacket.SenderHardwareAddress.ToString();
+                    packetDict["DestPort"] = arpPacket.TargetHardwareAddress.ToString();
+                    packetDict["Protocol"] = "ARP";
                     packetDict["PacketType"] = (arp is IPPacket ? arp.Version.ToString() : "");
-                    packetDict["TTL"]        = (arp is IPPacket ? arp.TimeToLive.ToString() : "0");
+                    packetDict["TTL"] = (arp is IPPacket ? arp.TimeToLive.ToString() : "0");
                 }
 
                 if (icmp4Packet != null ||
                     icmp5Packet != null ||
-                    igmpPacket  != null ||
+                    igmpPacket != null ||
                     igmp2Packet != null)
                 {
                     var ipPacket = packet.Extract<IPPacket>();
-                    packetDict["SrcIP"]      = ipPacket.SourceAddress.ToString();
-                    packetDict["DestIP"]     = ipPacket.DestinationAddress.ToString();
-                    packetDict["SrcPort"]    = "Null";
-                    packetDict["DestPort"]   = "Null";
-                    packetDict["Protocol"]   = ipPacket.Protocol.ToString();
+                    packetDict["SrcIP"] = ipPacket.SourceAddress.ToString();
+                    packetDict["DestIP"] = ipPacket.DestinationAddress.ToString();
+                    packetDict["SrcPort"] = "Null";
+                    packetDict["DestPort"] = "Null";
+                    packetDict["Protocol"] = ipPacket.Protocol.ToString();
                     packetDict["PacketType"] = ipPacket.Version.ToString();
-                    packetDict["TTL"]        = ipPacket.TimeToLive.ToString();
+                    packetDict["TTL"] = ipPacket.TimeToLive.ToString();
                 }
 
                 #endregion
 
 
-
-
-
-
-
-                if (tcpPacket   != null ||
-                    udpPacket   != null ||
-                    arpPacket   != null ||
+                if (tcpPacket != null ||
+                    udpPacket != null ||
+                    arpPacket != null ||
                     icmp4Packet != null ||
                     icmp5Packet != null ||
-                    igmpPacket  != null ||
+                    igmpPacket != null ||
                     igmp2Packet != null)
                 {
                     this.Invoke(new Action(() => { pgb_BackProgress.Value = 0; }));
@@ -223,7 +243,8 @@ namespace Toratan
                         // dgv_PacketsList.FirstDisplayedScrollingRowIndex = dgv_PacketsList.RowCount - 1;
                     }));
                 }
-                else
+
+                if (rawPacket == null)
                 {
                     MessageBox.Show("Packet:\n\n" + packet);
                     this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Loaded"; }));
@@ -242,6 +263,8 @@ namespace Toratan
             {
                 MessageBox.Show("Select pcap file", "Select File");
             }
+
+
         }
         #endregion
 
