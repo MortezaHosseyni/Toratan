@@ -21,6 +21,18 @@ namespace Toratan
     {
         Label lblEmpty = new Label();
 
+
+        #region Public Data For Report
+
+        public string pcapName = "";
+        public int successRequest = 0, errorRequest = 0;
+        public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
+        public List<string> allProtocols = new List<string>();
+        public List<string> allUrls = new List<string>();
+
+        #endregion
+
+
         public frmMain()
         {
             InitializeComponent();
