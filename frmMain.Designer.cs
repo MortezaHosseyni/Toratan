@@ -341,7 +341,7 @@
             // 
             // col_LiveTime
             // 
-            this.col_LiveTime.HeaderText = "Live Time";
+            this.col_LiveTime.HeaderText = "TTL";
             this.col_LiveTime.Name = "col_LiveTime";
             this.col_LiveTime.ReadOnly = true;
             // 

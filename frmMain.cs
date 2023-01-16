@@ -32,8 +32,6 @@ namespace Toratan
         }
 
         #region Capture Packets
-        public Regex rx = new Regex(@"/Type=(.*?)]|SourceAddress=(.*?),|DestinationAddress=(.*?),|Protocol=(.*?),|TimeToLive=(.*?)]|SourcePort=(.*?),|DestinationPort=(.*?)]/gm", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
         private void btn_SelectPcap_Click(object sender, EventArgs e)
         {
             OpenFileDialog pcap = new OpenFileDialog();
@@ -79,9 +77,101 @@ namespace Toratan
                 var rawPacket = e.GetPacket();
                 var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
-                
-                Match packetInfo = rx.Match(packet.ToString());
-                if (packetInfo.Success)
+                #region Packet Type
+
+                var tcpPacket = packet.Extract<TcpPacket>();
+                var udpPacket = packet.Extract<UdpPacket>();
+
+                var arpPacket = packet.Extract<ArpPacket>();
+
+                var icmp4Packet = packet.Extract<IcmpV4Packet>();
+                var icmp5Packet = packet.Extract<IcmpV6Packet>();
+
+                var igmpPacket = packet.Extract<IgmpPacket>();
+                var igmp2Packet = packet.Extract<IgmpV2Packet>();
+
+                #endregion
+
+                #region Set Packet Values
+
+                var packetDict = new Dictionary<string, string> {
+                    { "SrcIP", "" },
+                    { "DestIP", "" },
+
+                    { "SrcPort", "" },
+                    { "DestPort", "" },
+
+                    { "PacketType", "" },
+                    { "TTL", "" },
+                    { "Protocol", "" },
+                };
+
+
+                if (tcpPacket != null)
+                {
+                    var tcp = (IPPacket)tcpPacket.ParentPacket;
+                    packetDict["SrcIP"]      = tcp.SourceAddress.ToString();
+                    packetDict["DestIP"]     = tcp.SourceAddress.ToString();
+                    packetDict["SrcPort"]    = tcpPacket.SourcePort.ToString();
+                    packetDict["DestPort"]   = tcpPacket.DestinationPort.ToString();
+                    packetDict["Protocol"]   = tcp.Protocol.ToString();
+                    packetDict["PacketType"] = tcp.Version.ToString();
+                    packetDict["TTL"]        = tcp.TimeToLive.ToString();
+                }
+                if (udpPacket != null)
+                {
+                    var udp = (IPPacket)udpPacket.ParentPacket;
+                    packetDict["SrcIP"]      = udp.SourceAddress.ToString();
+                    packetDict["DestIP"]     = udp.SourceAddress.ToString();
+                    packetDict["SrcPort"]    = udpPacket.SourcePort.ToString();
+                    packetDict["DestPort"]   = udpPacket.DestinationPort.ToString();
+                    packetDict["Protocol"]   = udp.Protocol.ToString();
+                    packetDict["PacketType"] = udp.Version.ToString();
+                    packetDict["TTL"]        = udp.TimeToLive.ToString();
+                }
+
+                if (arpPacket != null)
+                {
+                    var arp = (IPPacket)arpPacket.ParentPacket;
+                    packetDict["SrcIP"]      = arpPacket.SenderProtocolAddress.ToString();
+                    packetDict["DestIP"]     = arpPacket.TargetProtocolAddress.ToString();
+                    packetDict["SrcPort"]    = arpPacket.SenderHardwareAddress.ToString();
+                    packetDict["DestPort"]   = arpPacket.TargetHardwareAddress.ToString();
+                    packetDict["Protocol"]   = "ARP";
+                    packetDict["PacketType"] = (arp is IPPacket ? arp.Version.ToString() : "");
+                    packetDict["TTL"]        = (arp is IPPacket ? arp.TimeToLive.ToString() : "0");
+                }
+
+                if (icmp4Packet != null ||
+                    icmp5Packet != null ||
+                    igmpPacket  != null ||
+                    igmp2Packet != null)
+                {
+                    var ipPacket = packet.Extract<IPPacket>();
+                    packetDict["SrcIP"]      = ipPacket.SourceAddress.ToString();
+                    packetDict["DestIP"]     = ipPacket.DestinationAddress.ToString();
+                    packetDict["SrcPort"]    = "Null";
+                    packetDict["DestPort"]   = "Null";
+                    packetDict["Protocol"]   = ipPacket.Protocol.ToString();
+                    packetDict["PacketType"] = ipPacket.Version.ToString();
+                    packetDict["TTL"]        = ipPacket.TimeToLive.ToString();
+                }
+
+                #endregion
+
+
+
+
+
+
+
+                if (tcpPacket   != null ||
+                    udpPacket   != null ||
+                    arpPacket   != null ||
+                    icmp4Packet != null ||
+                    icmp5Packet != null ||
+                    igmpPacket  != null ||
+                    igmp2Packet != null)
                 {
                     this.Invoke(new Action(() => { pgb_BackProgress.Value = 0; }));
 
@@ -90,31 +180,40 @@ namespace Toratan
 
                     this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_No"].Value = i + 1; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_SrcIP"].Value = packetInfo.Groups[2].Value; }));
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_DestIP"].Value = packetInfo.Groups[3].Value; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_SrcIP"].Value = packetDict["SrcIP"]; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_DestIP"].Value = packetDict["DestIP"]; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_SourcePort"].Value = packetInfo.Groups[6].Value; }));
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_DestPort"].Value = packetInfo.Groups[7].Value; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_SourcePort"].Value = packetDict["SrcPort"]; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_DestPort"].Value = packetDict["DestPort"]; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_Protocol"].Value = packetInfo.Groups[4].Value; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_Protocol"].Value = packetDict["Protocol"]; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_PacketType"].Value = packetInfo.Groups[1].Value; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_PacketType"].Value = packetDict["PacketType"]; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_LiveTime"].Value = packetInfo.Groups[5].Value; }));
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_LiveTime"].Value = packetDict["TTL"] + " ms"; }));
+
 
                     Thread.Sleep(20);
 
-                    this.Invoke(new Action(() => { ctx_NowStatus.Text = $"Capture Packet: {i}"; }));
-                    this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Is Loading"; }));
-                    this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Indigo; }));
+                    this.Invoke(new Action(() =>
+                    {
+                        ctx_NowStatus.Text = $"Capture Packet: {i}";
+                        ctx_PacketsStatus.Text = $"Is Loading";
+                        ctx_PacketsStatus.ForeColor = Color.Indigo;
+                    }));
 
                     this.Invoke(new Action(() => { pgb_BackProgress.Value += 50; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Controls.Remove(lblEmpty); }));
-                    this.Invoke(new Action(() => { lblEmpty.Visible = false; }));
+                    this.Invoke(new Action(() =>
+                    {
+                        dgv_PacketsList.Controls.Remove(lblEmpty);
+                        lblEmpty.Visible = false;
+                        // dgv_PacketsList.FirstDisplayedScrollingRowIndex = dgv_PacketsList.RowCount - 1;
+                    }));
                 }
                 else
                 {
+                    MessageBox.Show("Packet:\n\n" + packet);
                     this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Loaded"; }));
                     this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
                 }
