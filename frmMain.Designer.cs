@@ -62,6 +62,7 @@
             this.col_SourcePort = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_DestPort = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_Protocol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.col_Length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_PacketType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_LiveTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mnu_TopMenu.SuspendLayout();
@@ -283,6 +284,7 @@
             this.col_SourcePort,
             this.col_DestPort,
             this.col_Protocol,
+            this.col_Length,
             this.col_PacketType,
             this.col_LiveTime});
             this.dgv_PacketsList.Location = new System.Drawing.Point(12, 27);
@@ -331,6 +333,12 @@
             this.col_Protocol.HeaderText = "Protocol";
             this.col_Protocol.Name = "col_Protocol";
             this.col_Protocol.ReadOnly = true;
+            // 
+            // col_Length
+            // 
+            this.col_Length.HeaderText = "Length";
+            this.col_Length.Name = "col_Length";
+            this.col_Length.ReadOnly = true;
             // 
             // col_PacketType
             // 
@@ -411,6 +419,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn col_SourcePort;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_DestPort;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_Protocol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn col_Length;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_PacketType;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_LiveTime;
     }

@@ -24,7 +24,7 @@ namespace Toratan
         #region Public Data For Report
 
         public string pcapName = "";
-        public int successRequest = 0, errorRequest = 0;
+        public long totalLength = 0;
         public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
         public List<string> allProtocols = new List<string>();
         public List<string> allUrls = new List<string>();
@@ -82,11 +82,6 @@ namespace Toratan
         }
         private void capturePackets(string pcapFile)
         {
-            if (cpackMode == 0)
-            {
-                return;
-            }
-
             ICaptureDevice device;
             try
             {
@@ -122,10 +117,16 @@ namespace Toratan
                 var arpPacket = packet.Extract<ArpPacket>();
 
                 var icmp4Packet = packet.Extract<IcmpV4Packet>();
-                var icmp5Packet = packet.Extract<IcmpV6Packet>();
+                var icmp6Packet = packet.Extract<IcmpV6Packet>();
 
                 var igmpPacket = packet.Extract<IgmpPacket>();
                 var igmp2Packet = packet.Extract<IgmpV2Packet>();
+
+                var dhcpPacket = packet.Extract<DhcpV4Packet>();
+
+                var transPacket = packet.Extract<TransportPacket>();
+
+                var ipPacket = packet.Extract<IPPacket>();
 
                 #endregion
 
@@ -141,6 +142,8 @@ namespace Toratan
                     { "PacketType", "" },
                     { "TTL", "" },
                     { "Protocol", "" },
+
+                    { "Length", "" },
                 };
 
 
@@ -154,6 +157,7 @@ namespace Toratan
                     packetDict["Protocol"] = tcp.Protocol.ToString();
                     packetDict["PacketType"] = tcp.Version.ToString();
                     packetDict["TTL"] = tcp.TimeToLive.ToString();
+                    packetDict["Length"] = tcpPacket.PayloadData.Length.ToString();
                 }
                 if (udpPacket != null)
                 {
@@ -165,6 +169,22 @@ namespace Toratan
                     packetDict["Protocol"] = udp.Protocol.ToString();
                     packetDict["PacketType"] = udp.Version.ToString();
                     packetDict["TTL"] = udp.TimeToLive.ToString();
+                    string length = (udpPacket.PayloadData != null ? udpPacket.PayloadData.Length.ToString() : "");
+                    packetDict["Length"] = length;
+                }
+
+                if (transPacket != null)
+                {
+                    var trans = (IPPacket)transPacket.ParentPacket;
+                    packetDict["SrcIP"] = trans.SourceAddress.ToString();
+                    packetDict["DestIP"] = trans.DestinationAddress.ToString();
+                    packetDict["SrcPort"] = transPacket.SourcePort.ToString();
+                    packetDict["DestPort"] = transPacket.DestinationPort.ToString();
+                    packetDict["Protocol"] = "TLS";
+                    packetDict["PacketType"] = ipPacket.Version.ToString();
+                    packetDict["TTL"] = ipPacket.TimeToLive.ToString();
+                    string length = (transPacket.PayloadData != null ? transPacket.PayloadData.Length.ToString() : "");
+                    packetDict["Length"] = length;
                 }
 
                 if (arpPacket != null)
@@ -177,14 +197,15 @@ namespace Toratan
                     packetDict["Protocol"] = "ARP";
                     packetDict["PacketType"] = (arp is IPPacket ? arp.Version.ToString() : "");
                     packetDict["TTL"] = (arp is IPPacket ? arp.TimeToLive.ToString() : "0");
+                    packetDict["Length"] = "42";
                 }
 
                 if (icmp4Packet != null ||
-                    icmp5Packet != null ||
-                    igmpPacket != null ||
+                    icmp6Packet != null ||
+                    igmpPacket  != null ||
                     igmp2Packet != null)
                 {
-                    var ipPacket = packet.Extract<IPPacket>();
+
                     packetDict["SrcIP"] = ipPacket.SourceAddress.ToString();
                     packetDict["DestIP"] = ipPacket.DestinationAddress.ToString();
                     packetDict["SrcPort"] = "Null";
@@ -192,6 +213,15 @@ namespace Toratan
                     packetDict["Protocol"] = ipPacket.Protocol.ToString();
                     packetDict["PacketType"] = ipPacket.Version.ToString();
                     packetDict["TTL"] = ipPacket.TimeToLive.ToString();
+
+                    switch (packetDict["Protocol"])
+                    {
+                        case "IcmpV4": packetDict["Length"] = (icmp4Packet.PayloadData != null ? icmp4Packet.PayloadData.Length.ToString() : ""); break;
+                        case "IcmpV6": packetDict["Length"] = (icmp6Packet.PayloadData != null ? icmp6Packet.PayloadData.Length.ToString() : ""); break;
+                        case "Igmp": packetDict["Length"] = (igmpPacket.PayloadData != null ? igmpPacket.PayloadData.Length.ToString() : ""); break;
+                        case "IgmpV2": packetDict["Length"] = (igmp2Packet.PayloadData != null ? igmp2Packet.PayloadData.Length.ToString() : ""); break;
+                    }
+
                 }
 
                 #endregion
@@ -201,7 +231,7 @@ namespace Toratan
                     udpPacket != null ||
                     arpPacket != null ||
                     icmp4Packet != null ||
-                    icmp5Packet != null ||
+                    icmp6Packet != null ||
                     igmpPacket != null ||
                     igmp2Packet != null)
                 {
@@ -223,6 +253,8 @@ namespace Toratan
                     this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_PacketType"].Value = packetDict["PacketType"]; }));
 
                     this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_LiveTime"].Value = packetDict["TTL"] + " ms"; }));
+
+                    this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_Length"].Value = packetDict["Length"]; }));
 
 
                     Thread.Sleep(20);
