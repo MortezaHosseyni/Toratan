@@ -16,6 +16,10 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
 using System.Collections;
 using System.Security.Policy;
+using System.Net.Sockets;
+using System.IO;
+using DnsClient;
+using PacketDotNet.Utils;
 
 namespace Toratan
 {
@@ -28,7 +32,7 @@ namespace Toratan
         public string pcapName = "";
         public long totalLength = 0;
         public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
-        public List<string> allUrls = new List<string>();
+        public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
         public List<string> allProtocols = new List<string>();
 
         #endregion
@@ -105,7 +109,7 @@ namespace Toratan
                 if (cpackMode == 0)
                 {
                     device.StopCapture();
-                    ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.RowCount} Packet)";
+                    ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.Rows.Count.ToString()} Packet)";
                     ctx_PacketsStatus.Text = "Stoped";
                     return;
                 }
@@ -155,7 +159,7 @@ namespace Toratan
                     packetDict["DestIP"] = tcp.SourceAddress.ToString();
                     packetDict["SrcPort"] = tcpPacket.SourcePort.ToString();
                     packetDict["DestPort"] = tcpPacket.DestinationPort.ToString();
-                    
+
                     switch (tcpPacket.DestinationPort.ToString())
                     {
                         case "80": packetDict["Protocol"] = "HTTP"; break;
@@ -181,21 +185,18 @@ namespace Toratan
                     }
 
                     #region URL
-                    if (tcpPacket != null && (tcpPacket.DestinationPort == 80 || tcpPacket.DestinationPort == 443))
+                    //txt_Log.Text += $"\n\n\n{Encoding.ASCII.GetString(tcpPacket.PayloadData)}\n\n=============";
+                    if (tcpPacket.PayloadData.Length > 0 && Encoding.ASCII.GetString(tcpPacket.PayloadData).Contains("GET"))
                     {
-                        var payload = tcpPacket.PayloadData;
+                        string request = Encoding.ASCII.GetString(tcpPacket.PayloadData);
 
-                        var payloadString = System.Text.Encoding.ASCII.GetString(payload);
-
-                        var urlStart = payloadString.IndexOf("GET ");
-                        if (urlStart >= 0)
+                        if (request.Contains("Host:"))
                         {
-                            var urlEnd = payloadString.IndexOf(" HTTP/1.1");
-                            var url = payloadString.Substring(urlStart + 4, urlEnd - urlStart - 4);
-
-                            if (!allUrls.Contains(url))
+                            Regex r = new Regex(@"Host: (.*?)\n", RegexOptions.IgnoreCase);
+                            Match url = r.Match(request);
+                            if (!allHttpUrls.Contains(url.Groups[1].ToString()))
                             {
-                                allUrls.Add(url);
+                                allHttpUrls.Add(url.Groups[1].ToString());
                             }
                         }
                     }
@@ -218,15 +219,15 @@ namespace Toratan
                     {
                         case "53": packetDict["Protocol"] = "DNS"; break;
 
-                        case "67": 
+                        case "67":
                         case "68": packetDict["Protocol"] = "DHCP"; break;
 
-                        case "161": 
+                        case "161":
                         case "162": packetDict["Protocol"] = "SNMP"; break;
 
                         case "123": packetDict["Protocol"] = "NTP"; break;
 
-                        case "16384": 
+                        case "16384":
                         case "32767": packetDict["Protocol"] = "RTP"; break;
 
                         case "137": packetDict["Protocol"] = "NBNS"; break;
@@ -241,6 +242,17 @@ namespace Toratan
                     {
                         allProtocols.Add(packetDict["Protocol"]);
                     }
+
+                    #region DNS URL
+                    if (udpPacket.DestinationPort.ToString() == "53")
+                    {
+                        string dnsUrl = getDnsUrl(udpPacket.PayloadData);
+                        if (!allDnsUrls.Contains(dnsUrl))
+                        {
+                            allDnsUrls.Add(dnsUrl);
+                        }
+                    }
+                    #endregion
 
                     packetDict["PacketType"] = udp.Version.ToString();
                     packetDict["TTL"] = udp.TimeToLive.ToString();
@@ -268,7 +280,7 @@ namespace Toratan
 
                 if (icmp4Packet != null ||
                     icmp6Packet != null ||
-                    igmpPacket  != null ||
+                    igmpPacket != null ||
                     igmp2Packet != null)
                 {
 
@@ -355,6 +367,29 @@ namespace Toratan
             }
         }
 
+        private string getDnsUrl(byte[] udpPacketBytes)
+        {
+            int i = 12;
+            while (udpPacketBytes[i] != 0)
+                i++;
+
+            string name = Encoding.ASCII.GetString(udpPacketBytes, 12, i - 12);
+
+            return ReplaceSpecialCharacters(name);
+        }
+        private string ReplaceSpecialCharacters(string input)
+        {
+            input = Regex.Replace(input, @"^[^a-zA-Z0-9\s]+", ""); // remove leading special characters
+            input = Regex.Replace(input, @"[^a-zA-Z0-9\s]+", "."); // replace all special characters with '.'
+            input = Regex.Replace(input, @"(\s{2,})", " "); // replace multiple spaces with one space
+            input = Regex.Replace(input, @"\r\n|\r|\n", "."); // replace new lines with '.'
+            input = input.Replace("\t", "."); // replace tab with '.'
+            input = input.Replace(" ", "."); // replace spaces with '.'
+            return input;
+        }
+
+
+
         private void bgw_ReadPackets_DoWork(object sender, DoWorkEventArgs e)
         {
             if (txt_PCapSelect.Text != "")
@@ -391,5 +426,25 @@ namespace Toratan
         }
         #endregion
 
+        private void btn_OnePageReport_Click(object sender, EventArgs e)
+        {
+            txt_Log.Text += "\n====Protocols=====\n";
+            foreach (var item in allProtocols)
+            {
+                txt_Log.Text += $"\n{item}";
+            }
+
+            txt_Log.Text += "\n====Urls=====\n";
+            foreach (var item in allHttpUrls)
+            {
+                txt_Log.Text += $"\n{item}\n";
+            }
+
+            txt_Log.Text += "\n====DNS=====\n";
+            foreach (var item in allDnsUrls)
+            {
+                txt_Log.Text += $"\n{item}\n";
+            }
+        }
     }
 }

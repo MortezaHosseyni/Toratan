@@ -65,6 +65,7 @@
             this.col_Length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_PacketType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_LiveTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txt_Log = new System.Windows.Forms.RichTextBox();
             this.mnu_TopMenu.SuspendLayout();
             this.sts_BottomStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_PacketsList)).BeginInit();
@@ -126,16 +127,16 @@
             // 
             // btn_OnePageReport
             // 
-            this.btn_OnePageReport.Enabled = false;
             this.btn_OnePageReport.Name = "btn_OnePageReport";
-            this.btn_OnePageReport.Size = new System.Drawing.Size(163, 22);
+            this.btn_OnePageReport.Size = new System.Drawing.Size(180, 22);
             this.btn_OnePageReport.Text = "One Page Report";
+            this.btn_OnePageReport.Click += new System.EventHandler(this.btn_OnePageReport_Click);
             // 
             // btn_ExportExcel
             // 
             this.btn_ExportExcel.Enabled = false;
             this.btn_ExportExcel.Name = "btn_ExportExcel";
-            this.btn_ExportExcel.Size = new System.Drawing.Size(163, 22);
+            this.btn_ExportExcel.Size = new System.Drawing.Size(180, 22);
             this.btn_ExportExcel.Text = "Export To Excel";
             // 
             // sts_BottomStatus
@@ -353,11 +354,20 @@
             this.col_LiveTime.Name = "col_LiveTime";
             this.col_LiveTime.ReadOnly = true;
             // 
+            // txt_Log
+            // 
+            this.txt_Log.Location = new System.Drawing.Point(608, 341);
+            this.txt_Log.Name = "txt_Log";
+            this.txt_Log.Size = new System.Drawing.Size(352, 133);
+            this.txt_Log.TabIndex = 9;
+            this.txt_Log.Text = "";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(972, 499);
+            this.Controls.Add(this.txt_Log);
             this.Controls.Add(this.dgv_PacketsList);
             this.Controls.Add(this.btn_CapturePackets);
             this.Controls.Add(this.btn_SelectPcap);
@@ -422,6 +432,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn col_Length;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_PacketType;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_LiveTime;
+        private System.Windows.Forms.RichTextBox txt_Log;
     }
 }
 
