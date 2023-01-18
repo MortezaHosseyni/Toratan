@@ -21,8 +21,8 @@ namespace Toratan
         #region Public Data For Report
 
         public string pcapName = "";
+        public DateTime capturedDate;
         public int packetsCount = 0;
-        public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
         public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
         public List<string> allProtocols = new List<string>();
 
@@ -136,6 +136,7 @@ namespace Toratan
 
                 
                 var rawPacket = e.GetPacket();
+                capturedDate = rawPacket.Timeval.Date;
                 var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
                 #region Packet Type
