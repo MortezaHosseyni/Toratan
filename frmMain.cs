@@ -379,12 +379,18 @@ namespace Toratan
         }
         private string ReplaceSpecialCharacters(string input)
         {
-            input = Regex.Replace(input, @"^[^a-zA-Z0-9\s]+", ""); // remove leading special characters
-            input = Regex.Replace(input, @"[^a-zA-Z0-9\s]+", "."); // replace all special characters with '.'
-            input = Regex.Replace(input, @"(\s{2,})", " "); // replace multiple spaces with one space
-            input = Regex.Replace(input, @"\r\n|\r|\n", "."); // replace new lines with '.'
-            input = input.Replace("\t", "."); // replace tab with '.'
-            input = input.Replace(" ", "."); // replace spaces with '.'
+            // Remove special characters from the start of the string
+            input = Regex.Replace(input, @"^[^a-zA-Z0-9\s]+", "");
+
+            // Replace new lines with '.'
+            input = Regex.Replace(input, @"\r\n|\r|\n", ".");
+
+            // Replace spaces, tabs, and special characters with '.'
+            input = Regex.Replace(input, @"[\s\t]+|[^a-zA-Z0-9\s]+", ".");
+
+            // Replace multiple '.' with single '.'
+            input = Regex.Replace(input, @"\.{2,}", ".");
+
             return input;
         }
 
