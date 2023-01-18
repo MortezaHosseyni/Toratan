@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
 using System.Collections;
+using System.Security.Policy;
 
 namespace Toratan
 {
@@ -27,8 +28,8 @@ namespace Toratan
         public string pcapName = "";
         public long totalLength = 0;
         public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
-        public List<string> allProtocols = new List<string>();
         public List<string> allUrls = new List<string>();
+        public List<string> allProtocols = new List<string>();
 
         #endregion
 
@@ -174,6 +175,32 @@ namespace Toratan
                         default: packetDict["Protocol"] = "TCP"; break;
                     }
 
+                    if (!allProtocols.Contains(packetDict["Protocol"]))
+                    {
+                        allProtocols.Add(packetDict["Protocol"]);
+                    }
+
+                    #region URL
+                    if (tcpPacket != null && (tcpPacket.DestinationPort == 80 || tcpPacket.DestinationPort == 443))
+                    {
+                        var payload = tcpPacket.PayloadData;
+
+                        var payloadString = System.Text.Encoding.ASCII.GetString(payload);
+
+                        var urlStart = payloadString.IndexOf("GET ");
+                        if (urlStart >= 0)
+                        {
+                            var urlEnd = payloadString.IndexOf(" HTTP/1.1");
+                            var url = payloadString.Substring(urlStart + 4, urlEnd - urlStart - 4);
+
+                            if (!allUrls.Contains(url))
+                            {
+                                allUrls.Add(url);
+                            }
+                        }
+                    }
+                    #endregion
+
 
                     packetDict["PacketType"] = tcp.Version.ToString();
                     packetDict["TTL"] = tcp.TimeToLive.ToString();
@@ -209,6 +236,12 @@ namespace Toratan
 
                         default: packetDict["Protocol"] = "UDP"; break;
                     }
+
+                    if (!allProtocols.Contains(packetDict["Protocol"]))
+                    {
+                        allProtocols.Add(packetDict["Protocol"]);
+                    }
+
                     packetDict["PacketType"] = udp.Version.ToString();
                     packetDict["TTL"] = udp.TimeToLive.ToString();
                     string length = (udpPacket.PayloadData != null ? udpPacket.PayloadData.Length.ToString() : "");
@@ -226,6 +259,11 @@ namespace Toratan
                     packetDict["PacketType"] = (arp is IPPacket ? arp.Version.ToString() : "");
                     packetDict["TTL"] = (arp is IPPacket ? arp.TimeToLive.ToString() : "0");
                     packetDict["Length"] = "42";
+
+                    if (!allProtocols.Contains("ARP"))
+                    {
+                        allProtocols.Add("ARP");
+                    }
                 }
 
                 if (icmp4Packet != null ||
@@ -241,6 +279,11 @@ namespace Toratan
                     packetDict["Protocol"] = ipPacket.Protocol.ToString();
                     packetDict["PacketType"] = ipPacket.Version.ToString();
                     packetDict["TTL"] = ipPacket.TimeToLive.ToString();
+
+                    if (!allProtocols.Contains(ipPacket.Protocol.ToString()))
+                    {
+                        allProtocols.Add(ipPacket.Protocol.ToString());
+                    }
 
                     switch (packetDict["Protocol"])
                     {
@@ -306,7 +349,6 @@ namespace Toratan
 
                 if (rawPacket == null)
                 {
-                    MessageBox.Show("Packet:\n\n" + packet);
                     this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Loaded"; }));
                     this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
                 }
