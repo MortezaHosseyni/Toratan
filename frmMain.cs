@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpPcap;
 using PacketDotNet;
 using SharpPcap.LibPcap;
-using PacketDotNet.Ieee80211;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
-using System.Collections;
-using System.Security.Policy;
-using System.Net.Sockets;
 using System.IO;
-using DnsClient;
-using PacketDotNet.Utils;
 
 namespace Toratan
 {
@@ -30,7 +21,7 @@ namespace Toratan
         #region Public Data For Report
 
         public string pcapName = "";
-        public long totalLength = 0;
+        public int packetsCount = 0;
         public Dictionary<string, int> destinationIPs = new Dictionary<string, int>();
         public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
         public List<string> allProtocols = new List<string>();
@@ -47,6 +38,11 @@ namespace Toratan
         private void frmMain_Load(object sender, EventArgs e)
         {
             emptyTable();
+
+            if (!File.Exists("log.txt"))
+            {
+                File.Create("log.txt").Dispose();
+            }
         }
 
         #region Capture Packets
@@ -61,13 +57,16 @@ namespace Toratan
             if (pcap.FileName != "")
             {
                 txt_PCapSelect.Text = pcap.FileName;
-                ctx_PCapFile.Text = "Loaded";
-                ctx_PCapFile.ForeColor = Color.Green;
             }
         }
         sbyte cpackMode = 0; // 0: Off | 1: On
         private void btn_CapturePackets_Click(object sender, EventArgs e)
         {
+            if (ctx_PCapFile.Text.Trim() == "Not Loaded")
+            {
+                MessageBox.Show("Please select .pcap file to capture", "File Not Exsist", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (cpackMode == 0)
             {
                 cpackMode = 1;
@@ -81,9 +80,12 @@ namespace Toratan
             }
             else
             {
-                cpackMode = 0;
-                btn_CapturePackets.Text = "Capture Packets";
-                bgw_ReadPackets.CancelAsync();
+                if (MessageBox.Show("Are you sure?", "Cancel Capture Proccess", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    cpackMode = 0;
+                    btn_CapturePackets.Text = "Capture Packets";
+                    bgw_ReadPackets.CancelAsync();
+                }
             }
 
         }
@@ -94,14 +96,28 @@ namespace Toratan
             {
                 device = new CaptureFileReaderDevice(pcapFile);
                 device.Open();
+                saveLog($"[{DateTime.Now}] Start capture packets from {txt_PCapSelect.Text.Trim().Split('\\').Last()}\n");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Caught exception when opening file" + e.ToString());
                 return;
             }
+
             device.OnPacketArrival += new PacketArrivalEventHandler(device_OnPacketArrival);
             device.Capture();
+
+            if (cpackMode == 1)
+            {
+                this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Loaded"; }));
+                this.Invoke(new Action(() => { btn_CapturePackets.Text = $"Capture Packets"; }));
+                this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
+                saveLog($"[{DateTime.Now}] All packets captured from {txt_PCapSelect.Text.Trim().Split('\\').Last()}\n");
+                cpackMode = 0;
+                packetsCount = dgv_PacketsList.Rows.Count;
+                pgb_BackProgress.Style = ProgressBarStyle.Blocks;
+            }
+
             device.Close();
 
             void device_OnPacketArrival(object sender, PacketCapture e)
@@ -109,10 +125,16 @@ namespace Toratan
                 if (cpackMode == 0)
                 {
                     device.StopCapture();
-                    ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.Rows.Count.ToString()} Packet)";
+                    device.Close();
+                    ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.Rows.Count} Packet)";
                     ctx_PacketsStatus.Text = "Stoped";
+                    saveLog($"[{DateTime.Now}] {txt_PCapSelect.Text.Trim().Split('\\').Last()} Capture packets stoped \n");
+                    pgb_BackProgress.Style = ProgressBarStyle.Blocks;
+
                     return;
                 }
+
+                
                 var rawPacket = e.GetPacket();
                 var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
@@ -184,8 +206,7 @@ namespace Toratan
                         allProtocols.Add(packetDict["Protocol"]);
                     }
 
-                    #region URL
-                    //txt_Log.Text += $"\n\n\n{Encoding.ASCII.GetString(tcpPacket.PayloadData)}\n\n=============";
+                    #region Http URL
                     if (tcpPacket.PayloadData.Length > 0 && Encoding.ASCII.GetString(tcpPacket.PayloadData).Contains("GET"))
                     {
                         string request = Encoding.ASCII.GetString(tcpPacket.PayloadData);
@@ -308,8 +329,8 @@ namespace Toratan
                 }
 
                 #endregion
-
-
+                
+                #region Fill Packets Table
                 if (tcpPacket != null ||
                     udpPacket != null ||
                     arpPacket != null ||
@@ -318,9 +339,11 @@ namespace Toratan
                     igmpPacket != null ||
                     igmp2Packet != null)
                 {
-                    this.Invoke(new Action(() => { pgb_BackProgress.Value = 0; }));
 
-                    this.Invoke(new Action(() => { dgv_PacketsList.Rows.Add(); }));
+                    this.Invoke(new Action(() => {
+                        pgb_BackProgress.Style = ProgressBarStyle.Marquee;
+                        dgv_PacketsList.Rows.Add();
+                    }));
                     int i = dgv_PacketsList.Rows.Count - 1;
 
                     this.Invoke(new Action(() => { dgv_PacketsList.Rows[i].Cells["col_No"].Value = i + 1; }));
@@ -344,29 +367,35 @@ namespace Toratan
 
                     this.Invoke(new Action(() =>
                     {
-                        ctx_NowStatus.Text = $"Capture Packet: {i}";
+                        ctx_NowStatus.Text = $"Capture Packet: {i + 1}";
                         ctx_PacketsStatus.Text = $"Is Loading";
                         ctx_PacketsStatus.ForeColor = Color.Indigo;
                     }));
-
-                    this.Invoke(new Action(() => { pgb_BackProgress.Value += 50; }));
 
                     this.Invoke(new Action(() =>
                     {
                         dgv_PacketsList.Controls.Remove(lblEmpty);
                         lblEmpty.Visible = false;
-                        // dgv_PacketsList.FirstDisplayedScrollingRowIndex = dgv_PacketsList.RowCount - 1;
                     }));
                 }
-
-                if (rawPacket == null)
-                {
-                    this.Invoke(new Action(() => { ctx_PacketsStatus.Text = $"Loaded"; }));
-                    this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
-                }
+                
+                #endregion
             }
         }
+        private void bgw_ReadPackets_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (txt_PCapSelect.Text != "")
+            {
+                capturePackets(txt_PCapSelect.Text);
+            }
+            else
+            {
+                MessageBox.Show("Select pcap file", "Select File");
+            }
+        }
+        #endregion
 
+        #region Decode DNS
         private string getDnsUrl(byte[] udpPacketBytes)
         {
             int i = 12;
@@ -379,35 +408,15 @@ namespace Toratan
         }
         private string ReplaceSpecialCharacters(string input)
         {
-            // Remove special characters from the start of the string
             input = Regex.Replace(input, @"^[^a-zA-Z0-9\s]+", "");
 
-            // Replace new lines with '.'
             input = Regex.Replace(input, @"\r\n|\r|\n", ".");
 
-            // Replace spaces, tabs, and special characters with '.'
             input = Regex.Replace(input, @"[\s\t]+|[^a-zA-Z0-9\s]+", ".");
 
-            // Replace multiple '.' with single '.'
             input = Regex.Replace(input, @"\.{2,}", ".");
 
             return input;
-        }
-
-
-
-        private void bgw_ReadPackets_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (txt_PCapSelect.Text != "")
-            {
-                capturePackets(txt_PCapSelect.Text);
-            }
-            else
-            {
-                MessageBox.Show("Select pcap file", "Select File");
-            }
-
-
         }
         #endregion
 
@@ -432,25 +441,41 @@ namespace Toratan
         }
         #endregion
 
+        #region Save Log
+        private void saveLog(string log)
+        {
+            File.AppendAllText("log.txt", log);
+            txt_Log.Text += log;
+        }
+        #endregion
+
+        private void txt_PCapSelect_TextChanged(object sender, EventArgs e)
+        {
+            if (!File.Exists(txt_PCapSelect.Text.Trim()))
+            {
+                ctx_PCapFile.Text = "Not Loaded";
+                ctx_PCapFile.ForeColor = Color.Red;
+            }
+            else
+            {
+                ctx_PCapFile.Text = "Loaded";
+                ctx_PCapFile.ForeColor = Color.Green;
+            }
+        }
+
+        private void btn_ClearLog_Click(object sender, EventArgs e)
+        {
+            txt_Log.Clear();
+        }
+
+        private void btn_Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
         private void btn_OnePageReport_Click(object sender, EventArgs e)
         {
-            txt_Log.Text += "\n====Protocols=====\n";
-            foreach (var item in allProtocols)
-            {
-                txt_Log.Text += $"\n{item}";
-            }
-
-            txt_Log.Text += "\n====Urls=====\n";
-            foreach (var item in allHttpUrls)
-            {
-                txt_Log.Text += $"\n{item}\n";
-            }
-
-            txt_Log.Text += "\n====DNS=====\n";
-            foreach (var item in allDnsUrls)
-            {
-                txt_Log.Text += $"\n{item}\n";
-            }
+            
         }
     }
 }

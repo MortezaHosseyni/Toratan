@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.mnu_TopMenu = new System.Windows.Forms.MenuStrip();
             this.btn_File = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,6 +67,8 @@
             this.col_PacketType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_LiveTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txt_Log = new System.Windows.Forms.RichTextBox();
+            this.btn_ClearLog = new System.Windows.Forms.Button();
+            this.tlp_ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.mnu_TopMenu.SuspendLayout();
             this.sts_BottomStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_PacketsList)).BeginInit();
@@ -78,7 +81,7 @@
             this.btn_Report});
             this.mnu_TopMenu.Location = new System.Drawing.Point(0, 0);
             this.mnu_TopMenu.Name = "mnu_TopMenu";
-            this.mnu_TopMenu.Size = new System.Drawing.Size(972, 24);
+            this.mnu_TopMenu.Size = new System.Drawing.Size(1068, 24);
             this.mnu_TopMenu.TabIndex = 0;
             this.mnu_TopMenu.Text = "menuStrip1";
             // 
@@ -96,25 +99,26 @@
             // btn_Logs
             // 
             this.btn_Logs.Name = "btn_Logs";
-            this.btn_Logs.Size = new System.Drawing.Size(107, 22);
+            this.btn_Logs.Size = new System.Drawing.Size(180, 22);
             this.btn_Logs.Text = "Logs";
             // 
             // btn_Line
             // 
             this.btn_Line.Name = "btn_Line";
-            this.btn_Line.Size = new System.Drawing.Size(104, 6);
+            this.btn_Line.Size = new System.Drawing.Size(177, 6);
             // 
             // btn_About
             // 
             this.btn_About.Name = "btn_About";
-            this.btn_About.Size = new System.Drawing.Size(107, 22);
+            this.btn_About.Size = new System.Drawing.Size(180, 22);
             this.btn_About.Text = "About";
             // 
             // btn_Exit
             // 
             this.btn_Exit.Name = "btn_Exit";
-            this.btn_Exit.Size = new System.Drawing.Size(107, 22);
+            this.btn_Exit.Size = new System.Drawing.Size(180, 22);
             this.btn_Exit.Text = "Exit";
+            this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
             // 
             // btn_Report
             // 
@@ -128,7 +132,7 @@
             // btn_OnePageReport
             // 
             this.btn_OnePageReport.Name = "btn_OnePageReport";
-            this.btn_OnePageReport.Size = new System.Drawing.Size(180, 22);
+            this.btn_OnePageReport.Size = new System.Drawing.Size(163, 22);
             this.btn_OnePageReport.Text = "One Page Report";
             this.btn_OnePageReport.Click += new System.EventHandler(this.btn_OnePageReport_Click);
             // 
@@ -136,7 +140,7 @@
             // 
             this.btn_ExportExcel.Enabled = false;
             this.btn_ExportExcel.Name = "btn_ExportExcel";
-            this.btn_ExportExcel.Size = new System.Drawing.Size(180, 22);
+            this.btn_ExportExcel.Size = new System.Drawing.Size(163, 22);
             this.btn_ExportExcel.Text = "Export To Excel";
             // 
             // sts_BottomStatus
@@ -153,7 +157,7 @@
             this.pgb_BackProgress});
             this.sts_BottomStatus.Location = new System.Drawing.Point(0, 477);
             this.sts_BottomStatus.Name = "sts_BottomStatus";
-            this.sts_BottomStatus.Size = new System.Drawing.Size(972, 22);
+            this.sts_BottomStatus.Size = new System.Drawing.Size(1068, 22);
             this.sts_BottomStatus.TabIndex = 1;
             this.sts_BottomStatus.Text = "statusStrip1";
             // 
@@ -216,7 +220,7 @@
             // 
             this.lbl_Title.AutoSize = true;
             this.lbl_Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
-            this.lbl_Title.Location = new System.Drawing.Point(702, 39);
+            this.lbl_Title.Location = new System.Drawing.Point(765, 46);
             this.lbl_Title.Name = "lbl_Title";
             this.lbl_Title.Size = new System.Drawing.Size(108, 31);
             this.lbl_Title.TabIndex = 2;
@@ -226,7 +230,7 @@
             // 
             this.lbl_Author.AutoSize = true;
             this.lbl_Author.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lbl_Author.Location = new System.Drawing.Point(764, 70);
+            this.lbl_Author.Location = new System.Drawing.Point(827, 77);
             this.lbl_Author.Name = "lbl_Author";
             this.lbl_Author.Size = new System.Drawing.Size(118, 15);
             this.lbl_Author.TabIndex = 3;
@@ -234,15 +238,16 @@
             // 
             // txt_PCapSelect
             // 
-            this.txt_PCapSelect.Location = new System.Drawing.Point(690, 122);
+            this.txt_PCapSelect.Location = new System.Drawing.Point(753, 129);
             this.txt_PCapSelect.Name = "txt_PCapSelect";
             this.txt_PCapSelect.Size = new System.Drawing.Size(234, 26);
             this.txt_PCapSelect.TabIndex = 4;
+            this.txt_PCapSelect.TextChanged += new System.EventHandler(this.txt_PCapSelect_TextChanged);
             // 
             // lbl_SelectPCap
             // 
             this.lbl_SelectPCap.AutoSize = true;
-            this.lbl_SelectPCap.Location = new System.Drawing.Point(604, 125);
+            this.lbl_SelectPCap.Location = new System.Drawing.Point(667, 132);
             this.lbl_SelectPCap.Name = "lbl_SelectPCap";
             this.lbl_SelectPCap.Size = new System.Drawing.Size(80, 20);
             this.lbl_SelectPCap.TabIndex = 5;
@@ -250,7 +255,7 @@
             // 
             // btn_SelectPcap
             // 
-            this.btn_SelectPcap.Location = new System.Drawing.Point(930, 122);
+            this.btn_SelectPcap.Location = new System.Drawing.Point(993, 129);
             this.btn_SelectPcap.Name = "btn_SelectPcap";
             this.btn_SelectPcap.Size = new System.Drawing.Size(30, 25);
             this.btn_SelectPcap.TabIndex = 6;
@@ -260,7 +265,7 @@
             // 
             // btn_CapturePackets
             // 
-            this.btn_CapturePackets.Location = new System.Drawing.Point(608, 163);
+            this.btn_CapturePackets.Location = new System.Drawing.Point(671, 170);
             this.btn_CapturePackets.Name = "btn_CapturePackets";
             this.btn_CapturePackets.Size = new System.Drawing.Size(352, 29);
             this.btn_CapturePackets.TabIndex = 7;
@@ -356,20 +361,33 @@
             // 
             // txt_Log
             // 
+            this.txt_Log.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_Log.Location = new System.Drawing.Point(608, 341);
             this.txt_Log.Name = "txt_Log";
-            this.txt_Log.Size = new System.Drawing.Size(352, 133);
+            this.txt_Log.Size = new System.Drawing.Size(448, 133);
             this.txt_Log.TabIndex = 9;
             this.txt_Log.Text = "";
+            // 
+            // btn_ClearLog
+            // 
+            this.btn_ClearLog.Location = new System.Drawing.Point(1026, 310);
+            this.btn_ClearLog.Name = "btn_ClearLog";
+            this.btn_ClearLog.Size = new System.Drawing.Size(30, 25);
+            this.btn_ClearLog.TabIndex = 6;
+            this.btn_ClearLog.Text = "🧹";
+            this.tlp_ToolTip.SetToolTip(this.btn_ClearLog, "Clear log box");
+            this.btn_ClearLog.UseVisualStyleBackColor = true;
+            this.btn_ClearLog.Click += new System.EventHandler(this.btn_ClearLog_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(972, 499);
+            this.ClientSize = new System.Drawing.Size(1068, 499);
             this.Controls.Add(this.txt_Log);
             this.Controls.Add(this.dgv_PacketsList);
             this.Controls.Add(this.btn_CapturePackets);
+            this.Controls.Add(this.btn_ClearLog);
             this.Controls.Add(this.btn_SelectPcap);
             this.Controls.Add(this.lbl_SelectPCap);
             this.Controls.Add(this.txt_PCapSelect);
@@ -433,6 +451,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn col_PacketType;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_LiveTime;
         private System.Windows.Forms.RichTextBox txt_Log;
+        private System.Windows.Forms.Button btn_ClearLog;
+        private System.Windows.Forms.ToolTip tlp_ToolTip;
     }
 }
 
