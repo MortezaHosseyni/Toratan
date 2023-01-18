@@ -14,6 +14,7 @@ using PacketDotNet.Ieee80211;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
+using System.Collections;
 
 namespace Toratan
 {
@@ -30,6 +31,7 @@ namespace Toratan
         public List<string> allUrls = new List<string>();
 
         #endregion
+
 
 
         public frmMain()
@@ -124,8 +126,6 @@ namespace Toratan
 
                 var dhcpPacket = packet.Extract<DhcpV4Packet>();
 
-                var transPacket = packet.Extract<TransportPacket>();
-
                 var ipPacket = packet.Extract<IPPacket>();
 
                 #endregion
@@ -154,7 +154,27 @@ namespace Toratan
                     packetDict["DestIP"] = tcp.SourceAddress.ToString();
                     packetDict["SrcPort"] = tcpPacket.SourcePort.ToString();
                     packetDict["DestPort"] = tcpPacket.DestinationPort.ToString();
-                    packetDict["Protocol"] = tcp.Protocol.ToString();
+                    
+                    switch (tcpPacket.DestinationPort.ToString())
+                    {
+                        case "80": packetDict["Protocol"] = "HTTP"; break;
+                        case "443": packetDict["Protocol"] = "HTTPS"; break;
+                        case "21": packetDict["Protocol"] = "FTP"; break;
+                        case "22": packetDict["Protocol"] = "SFTP"; break;
+                        case "23": packetDict["Protocol"] = "TelNet"; break;
+                        case "25": packetDict["Protocol"] = "SMTP"; break;
+                        case "110": packetDict["Protocol"] = "POP3"; break;
+                        case "143": packetDict["Protocol"] = "IMAP"; break;
+                        case "389": packetDict["Protocol"] = "LDAP"; break;
+                        case "3389": packetDict["Protocol"] = "RDP"; break;
+                        case "1723": packetDict["Protocol"] = "VPN"; break;
+                        case "5060": packetDict["Protocol"] = "SIP"; break;
+                        case "137": packetDict["Protocol"] = "NBNS"; break;
+
+                        default: packetDict["Protocol"] = "TCP"; break;
+                    }
+
+
                     packetDict["PacketType"] = tcp.Version.ToString();
                     packetDict["TTL"] = tcp.TimeToLive.ToString();
                     packetDict["Length"] = tcpPacket.PayloadData.Length.ToString();
@@ -166,24 +186,32 @@ namespace Toratan
                     packetDict["DestIP"] = udp.SourceAddress.ToString();
                     packetDict["SrcPort"] = udpPacket.SourcePort.ToString();
                     packetDict["DestPort"] = udpPacket.DestinationPort.ToString();
-                    packetDict["Protocol"] = udp.Protocol.ToString();
+
+                    switch (udpPacket.DestinationPort.ToString())
+                    {
+                        case "53": packetDict["Protocol"] = "DNS"; break;
+
+                        case "67": 
+                        case "68": packetDict["Protocol"] = "DHCP"; break;
+
+                        case "161": 
+                        case "162": packetDict["Protocol"] = "SNMP"; break;
+
+                        case "123": packetDict["Protocol"] = "NTP"; break;
+
+                        case "16384": 
+                        case "32767": packetDict["Protocol"] = "RTP"; break;
+
+                        case "137": packetDict["Protocol"] = "NBNS"; break;
+                        case "5355": packetDict["Protocol"] = "LLMNR"; break;
+                        case "1900": packetDict["Protocol"] = "SSDP"; break;
+                        case "5353": packetDict["Protocol"] = "MDNS"; break;
+
+                        default: packetDict["Protocol"] = "UDP"; break;
+                    }
                     packetDict["PacketType"] = udp.Version.ToString();
                     packetDict["TTL"] = udp.TimeToLive.ToString();
                     string length = (udpPacket.PayloadData != null ? udpPacket.PayloadData.Length.ToString() : "");
-                    packetDict["Length"] = length;
-                }
-
-                if (transPacket != null)
-                {
-                    var trans = (IPPacket)transPacket.ParentPacket;
-                    packetDict["SrcIP"] = trans.SourceAddress.ToString();
-                    packetDict["DestIP"] = trans.DestinationAddress.ToString();
-                    packetDict["SrcPort"] = transPacket.SourcePort.ToString();
-                    packetDict["DestPort"] = transPacket.DestinationPort.ToString();
-                    packetDict["Protocol"] = "TLS";
-                    packetDict["PacketType"] = ipPacket.Version.ToString();
-                    packetDict["TTL"] = ipPacket.TimeToLive.ToString();
-                    string length = (transPacket.PayloadData != null ? transPacket.PayloadData.Length.ToString() : "");
                     packetDict["Length"] = length;
                 }
 
