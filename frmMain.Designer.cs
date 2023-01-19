@@ -403,7 +403,11 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnu_TopMenu;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(1084, 538);
+            this.MinimumSize = new System.Drawing.Size(1084, 538);
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Toratan";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.mnu_TopMenu.ResumeLayout(false);
