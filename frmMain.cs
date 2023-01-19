@@ -158,9 +158,12 @@ namespace Toratan
                     ctx_NowStatus.Text = $"Packet Capture Stoped (Capture: {dgv_PacketsList.Rows.Count} Packet)";
                     ctx_PacketsStatus.Text = "Stoped";
                     saveLog($"[{DateTime.Now}] {txt_PCapSelect.Text.Trim().Split('\\').Last()} Capture packets stoped \n");
-                    pgb_BackProgress.Style = ProgressBarStyle.Blocks;
-                    btn_OnePageReport.Enabled = true;
-                    btn_OnePageReport.ToolTipText = "Get packets report in one page";
+                    
+                    this.Invoke(new Action(() => {
+                        pgb_BackProgress.Style = ProgressBarStyle.Blocks;
+                        btn_OnePageReport.Enabled = true;
+                        btn_OnePageReport.ToolTipText = "Get packets report in one page";
+                    }));
 
                     return;
                 }
