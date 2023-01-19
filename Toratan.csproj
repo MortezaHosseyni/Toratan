@@ -126,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\toratan.png" />
+    <None Include="Resources\printer.png" />
+    <None Include="Resources\floppy-disk.png" />
+    <None Include="Resources\cross.png" />
     <Content Include="toratan.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

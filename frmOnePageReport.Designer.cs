@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOnePageReport));
-            this.img_Logo = new System.Windows.Forms.PictureBox();
             this.lbl_Title = new System.Windows.Forms.Label();
             this.lbl_Author = new System.Windows.Forms.Label();
             this.pnl_Panel2 = new System.Windows.Forms.Panel();
@@ -53,24 +52,19 @@
             this.pnl_Panel5 = new System.Windows.Forms.Panel();
             this.lvw_Protocols = new System.Windows.Forms.ListView();
             this.lbl_ProtocolsTitle = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).BeginInit();
+            this.btn_Exit = new System.Windows.Forms.PictureBox();
+            this.btn_Print = new System.Windows.Forms.PictureBox();
+            this.img_Logo = new System.Windows.Forms.PictureBox();
+            this.pnt_Print = new System.Drawing.Printing.PrintDocument();
             this.pnl_Panel2.SuspendLayout();
             this.pnl_Panel4.SuspendLayout();
             this.pnl_Panel1.SuspendLayout();
             this.pnl_Panel3.SuspendLayout();
             this.pnl_Panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_Exit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_Print)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).BeginInit();
             this.SuspendLayout();
-            // 
-            // img_Logo
-            // 
-            this.img_Logo.Image = global::Toratan.Properties.Resources.toratan;
-            this.img_Logo.Location = new System.Drawing.Point(4, 4);
-            this.img_Logo.Margin = new System.Windows.Forms.Padding(4);
-            this.img_Logo.Name = "img_Logo";
-            this.img_Logo.Size = new System.Drawing.Size(123, 106);
-            this.img_Logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_Logo.TabIndex = 0;
-            this.img_Logo.TabStop = false;
             // 
             // lbl_Title
             // 
@@ -105,7 +99,7 @@
             this.pnl_Panel2.Controls.Add(this.lbl_PCAPFileName);
             this.pnl_Panel2.Location = new System.Drawing.Point(469, 12);
             this.pnl_Panel2.Name = "pnl_Panel2";
-            this.pnl_Panel2.Size = new System.Drawing.Size(372, 116);
+            this.pnl_Panel2.Size = new System.Drawing.Size(339, 116);
             this.pnl_Panel2.TabIndex = 2;
             // 
             // lbl_FileSize
@@ -184,21 +178,22 @@
             // lbl_PCAPFileTitle
             // 
             this.lbl_PCAPFileTitle.AutoSize = true;
-            this.lbl_PCAPFileTitle.Location = new System.Drawing.Point(473, 5);
+            this.lbl_PCAPFileTitle.Location = new System.Drawing.Point(473, 2);
             this.lbl_PCAPFileTitle.Name = "lbl_PCAPFileTitle";
             this.lbl_PCAPFileTitle.Size = new System.Drawing.Size(70, 17);
-            this.lbl_PCAPFileTitle.TabIndex = 3;
+            this.lbl_PCAPFileTitle.TabIndex = 0;
             this.lbl_PCAPFileTitle.Text = "PCAP File";
             // 
             // lvw_DnsUrls
             // 
             this.lvw_DnsUrls.BackColor = System.Drawing.Color.White;
             this.lvw_DnsUrls.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lvw_DnsUrls.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lvw_DnsUrls.Enabled = false;
+            this.lvw_DnsUrls.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.lvw_DnsUrls.HideSelection = false;
             this.lvw_DnsUrls.Location = new System.Drawing.Point(6, 10);
             this.lvw_DnsUrls.Name = "lvw_DnsUrls";
-            this.lvw_DnsUrls.Size = new System.Drawing.Size(475, 545);
+            this.lvw_DnsUrls.Size = new System.Drawing.Size(438, 545);
             this.lvw_DnsUrls.TabIndex = 4;
             this.lvw_DnsUrls.UseCompatibleStateImageBehavior = false;
             this.lvw_DnsUrls.View = System.Windows.Forms.View.List;
@@ -206,10 +201,10 @@
             // lbl_DNSUrlsTitle
             // 
             this.lbl_DNSUrlsTitle.AutoSize = true;
-            this.lbl_DNSUrlsTitle.Location = new System.Drawing.Point(382, 137);
+            this.lbl_DNSUrlsTitle.Location = new System.Drawing.Point(363, 137);
             this.lbl_DNSUrlsTitle.Name = "lbl_DNSUrlsTitle";
             this.lbl_DNSUrlsTitle.Size = new System.Drawing.Size(66, 17);
-            this.lbl_DNSUrlsTitle.TabIndex = 3;
+            this.lbl_DNSUrlsTitle.TabIndex = 0;
             this.lbl_DNSUrlsTitle.Text = "DNS Urls";
             // 
             // pnl_Panel4
@@ -218,12 +213,14 @@
             this.pnl_Panel4.Controls.Add(this.lvw_DnsUrls);
             this.pnl_Panel4.Location = new System.Drawing.Point(359, 146);
             this.pnl_Panel4.Name = "pnl_Panel4";
-            this.pnl_Panel4.Size = new System.Drawing.Size(486, 561);
+            this.pnl_Panel4.Size = new System.Drawing.Size(449, 561);
             this.pnl_Panel4.TabIndex = 5;
             // 
             // pnl_Panel1
             // 
             this.pnl_Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnl_Panel1.Controls.Add(this.btn_Exit);
+            this.pnl_Panel1.Controls.Add(this.btn_Print);
             this.pnl_Panel1.Controls.Add(this.img_Logo);
             this.pnl_Panel1.Controls.Add(this.lbl_Title);
             this.pnl_Panel1.Controls.Add(this.ctx_TodayDate);
@@ -249,7 +246,7 @@
             this.lbl_HTTPUrlsTitle.Location = new System.Drawing.Point(16, 137);
             this.lbl_HTTPUrlsTitle.Name = "lbl_HTTPUrlsTitle";
             this.lbl_HTTPUrlsTitle.Size = new System.Drawing.Size(74, 17);
-            this.lbl_HTTPUrlsTitle.TabIndex = 6;
+            this.lbl_HTTPUrlsTitle.TabIndex = 0;
             this.lbl_HTTPUrlsTitle.Text = "HTTP Urls";
             // 
             // pnl_Panel3
@@ -265,6 +262,7 @@
             // 
             this.lvw_HttpUrls.BackColor = System.Drawing.Color.White;
             this.lvw_HttpUrls.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lvw_HttpUrls.Enabled = false;
             this.lvw_HttpUrls.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.lvw_HttpUrls.HideSelection = false;
             this.lvw_HttpUrls.Location = new System.Drawing.Point(6, 10);
@@ -286,6 +284,7 @@
             // lvw_Protocols
             // 
             this.lvw_Protocols.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lvw_Protocols.Enabled = false;
             this.lvw_Protocols.HideSelection = false;
             this.lvw_Protocols.Location = new System.Drawing.Point(6, 8);
             this.lvw_Protocols.Name = "lvw_Protocols";
@@ -300,21 +299,60 @@
             this.lbl_ProtocolsTitle.Location = new System.Drawing.Point(16, 497);
             this.lbl_ProtocolsTitle.Name = "lbl_ProtocolsTitle";
             this.lbl_ProtocolsTitle.Size = new System.Drawing.Size(67, 17);
-            this.lbl_ProtocolsTitle.TabIndex = 8;
+            this.lbl_ProtocolsTitle.TabIndex = 0;
             this.lbl_ProtocolsTitle.Text = "Protocols";
+            // 
+            // btn_Exit
+            // 
+            this.btn_Exit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_Exit.Image = global::Toratan.Properties.Resources.cross;
+            this.btn_Exit.Location = new System.Drawing.Point(374, 3);
+            this.btn_Exit.Name = "btn_Exit";
+            this.btn_Exit.Size = new System.Drawing.Size(33, 32);
+            this.btn_Exit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btn_Exit.TabIndex = 2;
+            this.btn_Exit.TabStop = false;
+            this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
+            // 
+            // btn_Print
+            // 
+            this.btn_Print.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_Print.Image = global::Toratan.Properties.Resources.printer;
+            this.btn_Print.Location = new System.Drawing.Point(413, 4);
+            this.btn_Print.Name = "btn_Print";
+            this.btn_Print.Size = new System.Drawing.Size(33, 32);
+            this.btn_Print.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btn_Print.TabIndex = 2;
+            this.btn_Print.TabStop = false;
+            this.btn_Print.Click += new System.EventHandler(this.btn_Print_Click);
+            // 
+            // img_Logo
+            // 
+            this.img_Logo.Image = global::Toratan.Properties.Resources.toratan;
+            this.img_Logo.Location = new System.Drawing.Point(4, 4);
+            this.img_Logo.Margin = new System.Windows.Forms.Padding(4);
+            this.img_Logo.Name = "img_Logo";
+            this.img_Logo.Size = new System.Drawing.Size(123, 106);
+            this.img_Logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_Logo.TabIndex = 0;
+            this.img_Logo.TabStop = false;
+            // 
+            // pnt_Print
+            // 
+            this.pnt_Print.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.pnt_Print_PrintPage);
             // 
             // frmOnePageReport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(857, 714);
+            this.ClientSize = new System.Drawing.Size(820, 714);
             this.Controls.Add(this.lbl_ProtocolsTitle);
+            this.Controls.Add(this.lbl_DNSUrlsTitle);
             this.Controls.Add(this.pnl_Panel5);
             this.Controls.Add(this.lbl_HTTPUrlsTitle);
             this.Controls.Add(this.pnl_Panel1);
             this.Controls.Add(this.pnl_Panel3);
-            this.Controls.Add(this.lbl_DNSUrlsTitle);
             this.Controls.Add(this.pnl_Panel4);
             this.Controls.Add(this.lbl_PCAPFileTitle);
             this.Controls.Add(this.pnl_Panel2);
@@ -326,7 +364,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Report Pcap Files";
             this.Load += new System.EventHandler(this.frmOnePageReport_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).EndInit();
             this.pnl_Panel2.ResumeLayout(false);
             this.pnl_Panel2.PerformLayout();
             this.pnl_Panel4.ResumeLayout(false);
@@ -334,6 +371,9 @@
             this.pnl_Panel1.PerformLayout();
             this.pnl_Panel3.ResumeLayout(false);
             this.pnl_Panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.btn_Exit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btn_Print)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -365,5 +405,8 @@
         private System.Windows.Forms.Label ctx_PCAPFileName;
         private System.Windows.Forms.Label ctx_CapturedDate;
         private System.Windows.Forms.Label ctx_FileSize;
+        private System.Windows.Forms.PictureBox btn_Print;
+        private System.Windows.Forms.PictureBox btn_Exit;
+        private System.Drawing.Printing.PrintDocument pnt_Print;
     }
 }
