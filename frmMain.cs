@@ -21,8 +21,8 @@ namespace Toratan
         #region Public Data For Report
 
         public DateTime capturedDate = new DateTime();
-        public int packetsCount = 0;
-        public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
+        public List<string> allHttpUrls = new List<string>();
+        public Dictionary<string, int> allDnsUrls = new Dictionary<string, int>();
         public List<string> allProtocols = new List<string>();
 
         #endregion
@@ -68,14 +68,39 @@ namespace Toratan
             }
             if (cpackMode == 0)
             {
-                cpackMode = 1;
-                btn_CapturePackets.Text = "Cancel";
-                dgv_PacketsList.Rows.Clear();
+                if (dgv_PacketsList.Rows.Count > 0)
+                {
+                    if (MessageBox.Show("The data of the Capture you made before will be deleted.\n-You can save reoprt file-", "Data will be deleted", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        cpackMode = 1;
+                        btn_CapturePackets.Text = "Cancel";
+                        dgv_PacketsList.Rows.Clear();
 
-                bgw_ReadPackets = new BackgroundWorker();
-                bgw_ReadPackets.WorkerSupportsCancellation = true;
-                bgw_ReadPackets.DoWork += new DoWorkEventHandler(bgw_ReadPackets_DoWork);
-                bgw_ReadPackets.RunWorkerAsync();
+                        allDnsUrls.Clear();
+                        allHttpUrls.Clear();
+                        allProtocols.Clear();
+
+                        bgw_ReadPackets = new BackgroundWorker();
+                        bgw_ReadPackets.WorkerSupportsCancellation = true;
+                        bgw_ReadPackets.DoWork += new DoWorkEventHandler(bgw_ReadPackets_DoWork);
+                        bgw_ReadPackets.RunWorkerAsync();
+                    }
+                }
+                else
+                {
+                    cpackMode = 1;
+                    btn_CapturePackets.Text = "Cancel";
+                    dgv_PacketsList.Rows.Clear();
+
+                    allDnsUrls.Clear();
+                    allHttpUrls.Clear();
+                    allProtocols.Clear();
+
+                    bgw_ReadPackets = new BackgroundWorker();
+                    bgw_ReadPackets.WorkerSupportsCancellation = true;
+                    bgw_ReadPackets.DoWork += new DoWorkEventHandler(bgw_ReadPackets_DoWork);
+                    bgw_ReadPackets.RunWorkerAsync();
+                }
             }
             else
             {
@@ -113,9 +138,8 @@ namespace Toratan
                 this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
                 saveLog($"[{DateTime.Now}] All packets captured from {txt_PCapSelect.Text.Trim().Split('\\').Last()}\n");
                 cpackMode = 0;
-                pgb_BackProgress.Style = ProgressBarStyle.Blocks;
-                packetsCount = dgv_PacketsList.Rows.Count;
                 this.Invoke(new Action(() => {
+                    pgb_BackProgress.Style = ProgressBarStyle.Blocks;
                     btn_OnePageReport.Enabled = true;
                     btn_OnePageReport.ToolTipText = "Get packets report in one page";
                 }));
@@ -136,7 +160,6 @@ namespace Toratan
                     pgb_BackProgress.Style = ProgressBarStyle.Blocks;
                     btn_OnePageReport.Enabled = true;
                     btn_OnePageReport.ToolTipText = "Get packets report in one page";
-                    packetsCount = dgv_PacketsList.Rows.Count;
 
                     return;
                 }
@@ -271,9 +294,14 @@ namespace Toratan
                     if (udpPacket.DestinationPort.ToString() == "53")
                     {
                         string dnsUrl = getDnsUrl(udpPacket.PayloadData);
-                        if (!allDnsUrls.Contains(dnsUrl))
+                        int value;
+                        if (allDnsUrls.TryGetValue(dnsUrl, out value))
                         {
-                            allDnsUrls.Add(dnsUrl);
+                            allDnsUrls[dnsUrl] = value + 1;
+                        }
+                        else
+                        {
+                            allDnsUrls.Add(dnsUrl, 1);
                         }
                     }
                     #endregion

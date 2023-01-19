@@ -14,7 +14,8 @@ namespace Toratan
     public partial class frmOnePageReport : Form
     {
         public string packetCount, pcapName, pcapSize, capturedDate;
-        public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
+        public List<string> allHttpUrls = new List<string>();
+        public Dictionary<string, int> allDnsUrls = new Dictionary<string, int>();
         public List<string> allProtocols = new List<string>();
         public frmOnePageReport()
         {
@@ -35,11 +36,11 @@ namespace Toratan
             }
             foreach (var dns in allDnsUrls)
             {
-                lvw_DnsUrls.Items.Add(dns);
+                lvw_DnsUrls.Items.Add($"{dns.Key} ({dns.Value})");
             }
             foreach (var proto in allProtocols)
             {
-                lvw_Protocols.Items.Add(proto);
+                lvw_Protocols.Items.Add(proto.ToUpper());
             }
         }
     }
