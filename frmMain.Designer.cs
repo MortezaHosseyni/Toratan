@@ -99,24 +99,24 @@
             // btn_Logs
             // 
             this.btn_Logs.Name = "btn_Logs";
-            this.btn_Logs.Size = new System.Drawing.Size(180, 22);
+            this.btn_Logs.Size = new System.Drawing.Size(107, 22);
             this.btn_Logs.Text = "Logs";
             // 
             // btn_Line
             // 
             this.btn_Line.Name = "btn_Line";
-            this.btn_Line.Size = new System.Drawing.Size(177, 6);
+            this.btn_Line.Size = new System.Drawing.Size(104, 6);
             // 
             // btn_About
             // 
             this.btn_About.Name = "btn_About";
-            this.btn_About.Size = new System.Drawing.Size(180, 22);
+            this.btn_About.Size = new System.Drawing.Size(107, 22);
             this.btn_About.Text = "About";
             // 
             // btn_Exit
             // 
             this.btn_Exit.Name = "btn_Exit";
-            this.btn_Exit.Size = new System.Drawing.Size(180, 22);
+            this.btn_Exit.Size = new System.Drawing.Size(107, 22);
             this.btn_Exit.Text = "Exit";
             this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
             // 
@@ -131,9 +131,11 @@
             // 
             // btn_OnePageReport
             // 
+            this.btn_OnePageReport.Enabled = false;
             this.btn_OnePageReport.Name = "btn_OnePageReport";
             this.btn_OnePageReport.Size = new System.Drawing.Size(163, 22);
             this.btn_OnePageReport.Text = "One Page Report";
+            this.btn_OnePageReport.ToolTipText = "Capture packets then try this";
             this.btn_OnePageReport.Click += new System.EventHandler(this.btn_OnePageReport_Click);
             // 
             // btn_ExportExcel
@@ -434,13 +436,11 @@
         private System.Windows.Forms.ToolStripStatusLabel ctx_NowStatus;
         private System.Windows.Forms.Label lbl_Title;
         private System.Windows.Forms.Label lbl_Author;
-        private System.Windows.Forms.TextBox txt_PCapSelect;
         private System.Windows.Forms.Label lbl_SelectPCap;
         private System.Windows.Forms.Button btn_SelectPcap;
         private System.Windows.Forms.Button btn_CapturePackets;
         private System.ComponentModel.BackgroundWorker bgw_ReadPackets;
         private System.Windows.Forms.ToolStripMenuItem btn_ExportExcel;
-        private System.Windows.Forms.DataGridView dgv_PacketsList;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_No;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_SrcIP;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_DestIP;
@@ -453,6 +453,8 @@
         private System.Windows.Forms.RichTextBox txt_Log;
         private System.Windows.Forms.Button btn_ClearLog;
         private System.Windows.Forms.ToolTip tlp_ToolTip;
+        public System.Windows.Forms.TextBox txt_PCapSelect;
+        public System.Windows.Forms.DataGridView dgv_PacketsList;
     }
 }
 

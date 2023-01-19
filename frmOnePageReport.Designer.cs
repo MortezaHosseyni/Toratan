@@ -33,11 +33,11 @@
             this.lbl_Title = new System.Windows.Forms.Label();
             this.lbl_Author = new System.Windows.Forms.Label();
             this.pnl_Panel2 = new System.Windows.Forms.Panel();
-            this.lbl_PCAPFileTitle = new System.Windows.Forms.Label();
-            this.lbl_PCAPFileName = new System.Windows.Forms.Label();
-            this.lbl_Packets = new System.Windows.Forms.Label();
-            this.lbl_CapturedTime = new System.Windows.Forms.Label();
             this.lbl_FileSize = new System.Windows.Forms.Label();
+            this.lbl_CapturedTime = new System.Windows.Forms.Label();
+            this.lbl_Packets = new System.Windows.Forms.Label();
+            this.lbl_PCAPFileName = new System.Windows.Forms.Label();
+            this.lbl_PCAPFileTitle = new System.Windows.Forms.Label();
             this.lvw_DnsUrls = new System.Windows.Forms.ListView();
             this.lbl_DNSUrlsTitle = new System.Windows.Forms.Label();
             this.pnl_Panel4 = new System.Windows.Forms.Panel();
@@ -46,8 +46,13 @@
             this.pnl_Panel3 = new System.Windows.Forms.Panel();
             this.lvw_HttpUrls = new System.Windows.Forms.ListView();
             this.pnl_Panel5 = new System.Windows.Forms.Panel();
-            this.lbl_ProtocolsTitle = new System.Windows.Forms.Label();
             this.lvw_Protocols = new System.Windows.Forms.ListView();
+            this.lbl_ProtocolsTitle = new System.Windows.Forms.Label();
+            this.ctx_TodayDate = new System.Windows.Forms.Label();
+            this.ctx_PCAPFileName = new System.Windows.Forms.Label();
+            this.ctx_PacketsCount = new System.Windows.Forms.Label();
+            this.ctx_CapturedDate = new System.Windows.Forms.Label();
+            this.ctx_FileSize = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).BeginInit();
             this.pnl_Panel2.SuspendLayout();
             this.pnl_Panel4.SuspendLayout();
@@ -70,22 +75,22 @@
             // lbl_Title
             // 
             this.lbl_Title.AutoSize = true;
-            this.lbl_Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
+            this.lbl_Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 28F);
             this.lbl_Title.Location = new System.Drawing.Point(134, 4);
             this.lbl_Title.Name = "lbl_Title";
-            this.lbl_Title.Size = new System.Drawing.Size(108, 31);
+            this.lbl_Title.Size = new System.Drawing.Size(150, 44);
             this.lbl_Title.TabIndex = 1;
             this.lbl_Title.Text = "Toratan";
             // 
             // lbl_Author
             // 
             this.lbl_Author.AutoSize = true;
-            this.lbl_Author.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Author.Location = new System.Drawing.Point(136, 35);
+            this.lbl_Author.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lbl_Author.Location = new System.Drawing.Point(139, 48);
             this.lbl_Author.Name = "lbl_Author";
-            this.lbl_Author.Size = new System.Drawing.Size(132, 20);
+            this.lbl_Author.Size = new System.Drawing.Size(167, 17);
             this.lbl_Author.TabIndex = 1;
-            this.lbl_Author.Text = "Morteza Hosseini";
+            this.lbl_Author.Text = "Morteza Hosseini © 2023";
             // 
             // pnl_Panel2
             // 
@@ -93,47 +98,15 @@
             this.pnl_Panel2.Controls.Add(this.lbl_FileSize);
             this.pnl_Panel2.Controls.Add(this.lbl_CapturedTime);
             this.pnl_Panel2.Controls.Add(this.lbl_Packets);
+            this.pnl_Panel2.Controls.Add(this.ctx_FileSize);
+            this.pnl_Panel2.Controls.Add(this.ctx_CapturedDate);
+            this.pnl_Panel2.Controls.Add(this.ctx_PacketsCount);
+            this.pnl_Panel2.Controls.Add(this.ctx_PCAPFileName);
             this.pnl_Panel2.Controls.Add(this.lbl_PCAPFileName);
             this.pnl_Panel2.Location = new System.Drawing.Point(469, 12);
             this.pnl_Panel2.Name = "pnl_Panel2";
-            this.pnl_Panel2.Size = new System.Drawing.Size(264, 116);
+            this.pnl_Panel2.Size = new System.Drawing.Size(372, 116);
             this.pnl_Panel2.TabIndex = 2;
-            // 
-            // lbl_PCAPFileTitle
-            // 
-            this.lbl_PCAPFileTitle.AutoSize = true;
-            this.lbl_PCAPFileTitle.Location = new System.Drawing.Point(473, 5);
-            this.lbl_PCAPFileTitle.Name = "lbl_PCAPFileTitle";
-            this.lbl_PCAPFileTitle.Size = new System.Drawing.Size(70, 17);
-            this.lbl_PCAPFileTitle.TabIndex = 3;
-            this.lbl_PCAPFileTitle.Text = "PCAP File";
-            // 
-            // lbl_PCAPFileName
-            // 
-            this.lbl_PCAPFileName.AutoSize = true;
-            this.lbl_PCAPFileName.Location = new System.Drawing.Point(49, 10);
-            this.lbl_PCAPFileName.Name = "lbl_PCAPFileName";
-            this.lbl_PCAPFileName.Size = new System.Drawing.Size(49, 17);
-            this.lbl_PCAPFileName.TabIndex = 4;
-            this.lbl_PCAPFileName.Text = "Name:";
-            // 
-            // lbl_Packets
-            // 
-            this.lbl_Packets.AutoSize = true;
-            this.lbl_Packets.Location = new System.Drawing.Point(36, 36);
-            this.lbl_Packets.Name = "lbl_Packets";
-            this.lbl_Packets.Size = new System.Drawing.Size(62, 17);
-            this.lbl_Packets.TabIndex = 4;
-            this.lbl_Packets.Text = "Packets:";
-            // 
-            // lbl_CapturedTime
-            // 
-            this.lbl_CapturedTime.AutoSize = true;
-            this.lbl_CapturedTime.Location = new System.Drawing.Point(11, 62);
-            this.lbl_CapturedTime.Name = "lbl_CapturedTime";
-            this.lbl_CapturedTime.Size = new System.Drawing.Size(87, 17);
-            this.lbl_CapturedTime.TabIndex = 4;
-            this.lbl_CapturedTime.Text = "Captured At:";
             // 
             // lbl_FileSize
             // 
@@ -144,14 +117,51 @@
             this.lbl_FileSize.TabIndex = 4;
             this.lbl_FileSize.Text = "File Size:";
             // 
+            // lbl_CapturedTime
+            // 
+            this.lbl_CapturedTime.AutoSize = true;
+            this.lbl_CapturedTime.Location = new System.Drawing.Point(11, 62);
+            this.lbl_CapturedTime.Name = "lbl_CapturedTime";
+            this.lbl_CapturedTime.Size = new System.Drawing.Size(87, 17);
+            this.lbl_CapturedTime.TabIndex = 4;
+            this.lbl_CapturedTime.Text = "Captured At:";
+            // 
+            // lbl_Packets
+            // 
+            this.lbl_Packets.AutoSize = true;
+            this.lbl_Packets.Location = new System.Drawing.Point(36, 36);
+            this.lbl_Packets.Name = "lbl_Packets";
+            this.lbl_Packets.Size = new System.Drawing.Size(62, 17);
+            this.lbl_Packets.TabIndex = 4;
+            this.lbl_Packets.Text = "Packets:";
+            // 
+            // lbl_PCAPFileName
+            // 
+            this.lbl_PCAPFileName.AutoSize = true;
+            this.lbl_PCAPFileName.Location = new System.Drawing.Point(49, 10);
+            this.lbl_PCAPFileName.Name = "lbl_PCAPFileName";
+            this.lbl_PCAPFileName.Size = new System.Drawing.Size(49, 17);
+            this.lbl_PCAPFileName.TabIndex = 4;
+            this.lbl_PCAPFileName.Text = "Name:";
+            // 
+            // lbl_PCAPFileTitle
+            // 
+            this.lbl_PCAPFileTitle.AutoSize = true;
+            this.lbl_PCAPFileTitle.Location = new System.Drawing.Point(473, 5);
+            this.lbl_PCAPFileTitle.Name = "lbl_PCAPFileTitle";
+            this.lbl_PCAPFileTitle.Size = new System.Drawing.Size(70, 17);
+            this.lbl_PCAPFileTitle.TabIndex = 3;
+            this.lbl_PCAPFileTitle.Text = "PCAP File";
+            // 
             // lvw_DnsUrls
             // 
             this.lvw_DnsUrls.BackColor = System.Drawing.Color.White;
             this.lvw_DnsUrls.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lvw_DnsUrls.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.lvw_DnsUrls.HideSelection = false;
             this.lvw_DnsUrls.Location = new System.Drawing.Point(6, 10);
             this.lvw_DnsUrls.Name = "lvw_DnsUrls";
-            this.lvw_DnsUrls.Size = new System.Drawing.Size(344, 395);
+            this.lvw_DnsUrls.Size = new System.Drawing.Size(456, 545);
             this.lvw_DnsUrls.TabIndex = 4;
             this.lvw_DnsUrls.UseCompatibleStateImageBehavior = false;
             this.lvw_DnsUrls.View = System.Windows.Forms.View.List;
@@ -171,7 +181,7 @@
             this.pnl_Panel4.Controls.Add(this.lvw_DnsUrls);
             this.pnl_Panel4.Location = new System.Drawing.Point(378, 146);
             this.pnl_Panel4.Name = "pnl_Panel4";
-            this.pnl_Panel4.Size = new System.Drawing.Size(355, 410);
+            this.pnl_Panel4.Size = new System.Drawing.Size(467, 561);
             this.pnl_Panel4.TabIndex = 5;
             // 
             // pnl_Panel1
@@ -179,6 +189,7 @@
             this.pnl_Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnl_Panel1.Controls.Add(this.img_Logo);
             this.pnl_Panel1.Controls.Add(this.lbl_Title);
+            this.pnl_Panel1.Controls.Add(this.ctx_TodayDate);
             this.pnl_Panel1.Controls.Add(this.lbl_Author);
             this.pnl_Panel1.Location = new System.Drawing.Point(12, 12);
             this.pnl_Panel1.Name = "pnl_Panel1";
@@ -200,7 +211,7 @@
             this.pnl_Panel3.Controls.Add(this.lvw_HttpUrls);
             this.pnl_Panel3.Location = new System.Drawing.Point(12, 146);
             this.pnl_Panel3.Name = "pnl_Panel3";
-            this.pnl_Panel3.Size = new System.Drawing.Size(355, 410);
+            this.pnl_Panel3.Size = new System.Drawing.Size(355, 347);
             this.pnl_Panel3.TabIndex = 7;
             // 
             // lvw_HttpUrls
@@ -210,7 +221,7 @@
             this.lvw_HttpUrls.HideSelection = false;
             this.lvw_HttpUrls.Location = new System.Drawing.Point(6, 10);
             this.lvw_HttpUrls.Name = "lvw_HttpUrls";
-            this.lvw_HttpUrls.Size = new System.Drawing.Size(344, 395);
+            this.lvw_HttpUrls.Size = new System.Drawing.Size(344, 332);
             this.lvw_HttpUrls.TabIndex = 4;
             this.lvw_HttpUrls.UseCompatibleStateImageBehavior = false;
             this.lvw_HttpUrls.View = System.Windows.Forms.View.List;
@@ -219,19 +230,10 @@
             // 
             this.pnl_Panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnl_Panel5.Controls.Add(this.lvw_Protocols);
-            this.pnl_Panel5.Location = new System.Drawing.Point(12, 570);
+            this.pnl_Panel5.Location = new System.Drawing.Point(12, 508);
             this.pnl_Panel5.Name = "pnl_Panel5";
             this.pnl_Panel5.Size = new System.Drawing.Size(355, 199);
             this.pnl_Panel5.TabIndex = 9;
-            // 
-            // lbl_ProtocolsTitle
-            // 
-            this.lbl_ProtocolsTitle.AutoSize = true;
-            this.lbl_ProtocolsTitle.Location = new System.Drawing.Point(16, 559);
-            this.lbl_ProtocolsTitle.Name = "lbl_ProtocolsTitle";
-            this.lbl_ProtocolsTitle.Size = new System.Drawing.Size(67, 17);
-            this.lbl_ProtocolsTitle.TabIndex = 8;
-            this.lbl_ProtocolsTitle.Text = "Protocols";
             // 
             // lvw_Protocols
             // 
@@ -242,14 +244,70 @@
             this.lvw_Protocols.Size = new System.Drawing.Size(344, 186);
             this.lvw_Protocols.TabIndex = 10;
             this.lvw_Protocols.UseCompatibleStateImageBehavior = false;
-            this.lvw_Protocols.View = System.Windows.Forms.View.Details;
+            this.lvw_Protocols.View = System.Windows.Forms.View.List;
+            // 
+            // lbl_ProtocolsTitle
+            // 
+            this.lbl_ProtocolsTitle.AutoSize = true;
+            this.lbl_ProtocolsTitle.Location = new System.Drawing.Point(16, 497);
+            this.lbl_ProtocolsTitle.Name = "lbl_ProtocolsTitle";
+            this.lbl_ProtocolsTitle.Size = new System.Drawing.Size(67, 17);
+            this.lbl_ProtocolsTitle.TabIndex = 8;
+            this.lbl_ProtocolsTitle.Text = "Protocols";
+            // 
+            // ctx_TodayDate
+            // 
+            this.ctx_TodayDate.AutoSize = true;
+            this.ctx_TodayDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ctx_TodayDate.Location = new System.Drawing.Point(138, 88);
+            this.ctx_TodayDate.Name = "ctx_TodayDate";
+            this.ctx_TodayDate.Size = new System.Drawing.Size(91, 20);
+            this.ctx_TodayDate.TabIndex = 1;
+            this.ctx_TodayDate.Text = "Today Date";
+            // 
+            // ctx_PCAPFileName
+            // 
+            this.ctx_PCAPFileName.AutoSize = true;
+            this.ctx_PCAPFileName.Location = new System.Drawing.Point(104, 10);
+            this.ctx_PCAPFileName.Name = "ctx_PCAPFileName";
+            this.ctx_PCAPFileName.Size = new System.Drawing.Size(97, 17);
+            this.ctx_PCAPFileName.TabIndex = 4;
+            this.ctx_PCAPFileName.Text = "PcapFile.pcap";
+            // 
+            // ctx_PacketsCount
+            // 
+            this.ctx_PacketsCount.AutoSize = true;
+            this.ctx_PacketsCount.Location = new System.Drawing.Point(104, 36);
+            this.ctx_PacketsCount.Name = "ctx_PacketsCount";
+            this.ctx_PacketsCount.Size = new System.Drawing.Size(16, 17);
+            this.ctx_PacketsCount.TabIndex = 4;
+            this.ctx_PacketsCount.Text = "0";
+            // 
+            // ctx_CapturedDate
+            // 
+            this.ctx_CapturedDate.AutoSize = true;
+            this.ctx_CapturedDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ctx_CapturedDate.Location = new System.Drawing.Point(104, 62);
+            this.ctx_CapturedDate.Name = "ctx_CapturedDate";
+            this.ctx_CapturedDate.Size = new System.Drawing.Size(164, 17);
+            this.ctx_CapturedDate.TabIndex = 4;
+            this.ctx_CapturedDate.Text = "10/18/2022 10:36:55 PM";
+            // 
+            // ctx_FileSize
+            // 
+            this.ctx_FileSize.AutoSize = true;
+            this.ctx_FileSize.Location = new System.Drawing.Point(104, 88);
+            this.ctx_FileSize.Name = "ctx_FileSize";
+            this.ctx_FileSize.Size = new System.Drawing.Size(39, 17);
+            this.ctx_FileSize.TabIndex = 4;
+            this.ctx_FileSize.Text = "0 Mb";
             // 
             // frmOnePageReport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(745, 788);
+            this.ClientSize = new System.Drawing.Size(857, 714);
             this.Controls.Add(this.lbl_ProtocolsTitle);
             this.Controls.Add(this.pnl_Panel5);
             this.Controls.Add(this.lbl_HTTPUrlsTitle);
@@ -264,7 +322,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmOnePageReport";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Report Pcap Files";
+            this.Load += new System.EventHandler(this.frmOnePageReport_Load);
             ((System.ComponentModel.ISupportInitialize)(this.img_Logo)).EndInit();
             this.pnl_Panel2.ResumeLayout(false);
             this.pnl_Panel2.PerformLayout();
@@ -299,5 +359,10 @@
         private System.Windows.Forms.Panel pnl_Panel5;
         private System.Windows.Forms.Label lbl_ProtocolsTitle;
         private System.Windows.Forms.ListView lvw_Protocols;
+        private System.Windows.Forms.Label ctx_TodayDate;
+        private System.Windows.Forms.Label ctx_PacketsCount;
+        private System.Windows.Forms.Label ctx_PCAPFileName;
+        private System.Windows.Forms.Label ctx_CapturedDate;
+        private System.Windows.Forms.Label ctx_FileSize;
     }
 }

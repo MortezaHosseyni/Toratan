@@ -20,8 +20,7 @@ namespace Toratan
 
         #region Public Data For Report
 
-        public string pcapName = "";
-        public DateTime capturedDate;
+        public DateTime capturedDate = new DateTime();
         public int packetsCount = 0;
         public List<string> allHttpUrls = new List<string>(), allDnsUrls = new List<string>();
         public List<string> allProtocols = new List<string>();
@@ -114,8 +113,13 @@ namespace Toratan
                 this.Invoke(new Action(() => { ctx_PacketsStatus.ForeColor = Color.Green; }));
                 saveLog($"[{DateTime.Now}] All packets captured from {txt_PCapSelect.Text.Trim().Split('\\').Last()}\n");
                 cpackMode = 0;
-                packetsCount = dgv_PacketsList.Rows.Count;
                 pgb_BackProgress.Style = ProgressBarStyle.Blocks;
+                packetsCount = dgv_PacketsList.Rows.Count;
+                this.Invoke(new Action(() => {
+                    btn_OnePageReport.Enabled = true;
+                    btn_OnePageReport.ToolTipText = "Get packets report in one page";
+                }));
+                
             }
 
             device.Close();
@@ -130,6 +134,9 @@ namespace Toratan
                     ctx_PacketsStatus.Text = "Stoped";
                     saveLog($"[{DateTime.Now}] {txt_PCapSelect.Text.Trim().Split('\\').Last()} Capture packets stoped \n");
                     pgb_BackProgress.Style = ProgressBarStyle.Blocks;
+                    btn_OnePageReport.Enabled = true;
+                    btn_OnePageReport.ToolTipText = "Get packets report in one page";
+                    packetsCount = dgv_PacketsList.Rows.Count;
 
                     return;
                 }
@@ -260,11 +267,6 @@ namespace Toratan
                         default: packetDict["Protocol"] = "UDP"; break;
                     }
 
-                    if (!allProtocols.Contains(packetDict["Protocol"]))
-                    {
-                        allProtocols.Add(packetDict["Protocol"]);
-                    }
-
                     #region DNS URL
                     if (udpPacket.DestinationPort.ToString() == "53")
                     {
@@ -340,6 +342,10 @@ namespace Toratan
                     igmpPacket != null ||
                     igmp2Packet != null)
                 {
+                    if (!allProtocols.Contains(packetDict["Protocol"]))
+                    {
+                        allProtocols.Add(packetDict["Protocol"]);
+                    }
 
                     this.Invoke(new Action(() => {
                         pgb_BackProgress.Style = ProgressBarStyle.Marquee;
@@ -456,6 +462,8 @@ namespace Toratan
             {
                 ctx_PCapFile.Text = "Not Loaded";
                 ctx_PCapFile.ForeColor = Color.Red;
+                btn_OnePageReport.Enabled = false;
+                btn_OnePageReport.ToolTipText = "Capture packets then try this";
             }
             else
             {
@@ -476,7 +484,17 @@ namespace Toratan
 
         private void btn_OnePageReport_Click(object sender, EventArgs e)
         {
-            
+            frmOnePageReport report = new frmOnePageReport();
+            report.pcapName = txt_PCapSelect.Text.Split('\\').Last();
+            report.pcapSize = Math.Round(new FileInfo(txt_PCapSelect.Text).Length / (1024.0 * 1024.0), 2).ToString();
+            report.packetCount = dgv_PacketsList.Rows.Count.ToString();
+            report.capturedDate = capturedDate.ToString();
+
+            report.allProtocols = allProtocols;
+            report.allDnsUrls = allDnsUrls;
+            report.allHttpUrls = allHttpUrls;
+
+            report.ShowDialog();
         }
     }
 }
