@@ -99,24 +99,26 @@
             // btn_Logs
             // 
             this.btn_Logs.Name = "btn_Logs";
-            this.btn_Logs.Size = new System.Drawing.Size(107, 22);
+            this.btn_Logs.Size = new System.Drawing.Size(180, 22);
             this.btn_Logs.Text = "Logs";
+            this.btn_Logs.Click += new System.EventHandler(this.btn_Logs_Click);
             // 
             // btn_Line
             // 
             this.btn_Line.Name = "btn_Line";
-            this.btn_Line.Size = new System.Drawing.Size(104, 6);
+            this.btn_Line.Size = new System.Drawing.Size(177, 6);
             // 
             // btn_About
             // 
             this.btn_About.Name = "btn_About";
-            this.btn_About.Size = new System.Drawing.Size(107, 22);
+            this.btn_About.Size = new System.Drawing.Size(180, 22);
             this.btn_About.Text = "About";
+            this.btn_About.Click += new System.EventHandler(this.btn_About_Click);
             // 
             // btn_Exit
             // 
             this.btn_Exit.Name = "btn_Exit";
-            this.btn_Exit.Size = new System.Drawing.Size(107, 22);
+            this.btn_Exit.Size = new System.Drawing.Size(180, 22);
             this.btn_Exit.Text = "Exit";
             this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
             // 

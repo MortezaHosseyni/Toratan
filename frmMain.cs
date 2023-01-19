@@ -11,6 +11,7 @@ using SharpPcap.LibPcap;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace Toratan
 {
@@ -523,6 +524,16 @@ namespace Toratan
             report.allHttpUrls = allHttpUrls;
 
             report.ShowDialog();
+        }
+
+        private void btn_Logs_Click(object sender, EventArgs e)
+        {
+            Process.Start("log.txt");
+        }
+
+        private void btn_About_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Developer: Morteza Hosseini\nTebriz Technical and Vocational University\nGitHub: @MrMeeann", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
